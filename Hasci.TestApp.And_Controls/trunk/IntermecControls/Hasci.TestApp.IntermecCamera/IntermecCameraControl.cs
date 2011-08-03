@@ -2,7 +2,7 @@
 //do not switch streaming! see also "ALL THE TIME"
 #define STREAMING_ON
 //#define MYDEBUG
-#define USE_ENTER_KEY
+//#define USE_ENTER_KEY
 #define USE_PRESS_N_HOLD
 using System;
 using System.Collections.Generic;
@@ -226,10 +226,12 @@ namespace Hasci.TestApp.IntermecPhotoControls
                 IntermecCamera.SnapshotFile.FilenamePadding = Camera.FilenamePaddingType.IncrementalCounter;// None;// Camera.FilenamePaddingType.IncrementalCounter;
 
 #if USE_ENTER_KEY
-#if USE_PRESS_N_HOLD
+    #if USE_PRESS_N_HOLD
                 showSnapshot(true); //show a still image
-#endif
+    #endif
+
 #else
+                showSnapshot(true); //show a still image
                 //remap scan button key to new events
                 mapKey();
                 //start the scan button watch thread
@@ -640,7 +642,11 @@ namespace Hasci.TestApp.IntermecPhotoControls
         }
         void addLog(string s)
         {
+#if DEBUG
             System.Diagnostics.Debug.WriteLine(s);
+#else
+            System.Threading.Thread.Sleep(1);
+#endif
         }
         void addLog2(string s)
         {
@@ -755,7 +761,11 @@ namespace Hasci.TestApp.IntermecPhotoControls
                         if (signaledEvent == _events[0])
                         {
                             addLog2("######### Caught StateLeftScan ########");
-                            onStateScan();
+                            if (!_bLastState)
+                            {
+                                _bLastState = true;
+                                onStateScan();
+                            }
                         }
                         if (signaledEvent == _events[1])
                         {
@@ -788,7 +798,9 @@ namespace Hasci.TestApp.IntermecPhotoControls
             addLog("...waitLoop EXIT");
         }
 #endif
-
+        /// <summary>
+        /// remember last state event handling
+        /// </summary>
         bool _bLastState = false;
         void onStateScan()
         {
@@ -813,6 +825,7 @@ namespace Hasci.TestApp.IntermecPhotoControls
             addLog("onStateScan IntermecCamera.Streaming=True...");
             IntermecCamera.Streaming = true;
 #endif
+            showSnapshot(false);
             ImageIsInPreview();
             addLog("...onStateScan ended");
         }
@@ -874,6 +887,8 @@ namespace Hasci.TestApp.IntermecPhotoControls
                 //    e.Graphics.DrawString("Snapshot", new Font("Tahoma", 8, FontStyle.Regular), new SolidBrush(Color.GreenYellow), 10, 10);
             }
         }
+
+        delegate void setShowSnapShotDelegate(bool bShow);
         /// <summary>
         /// show the snapshot or preview picturebox in front 
         /// </summary>
@@ -882,21 +897,29 @@ namespace Hasci.TestApp.IntermecPhotoControls
         private void showSnapshot(bool bShow)
         {
 #if USEGDI
-            addLog("showSnapshot() called with " + bShow.ToString());
-            if (bShow)
+            if (this.InvokeRequired)
             {
-                // CameraSnapshot.BringToFront();
-                CameraSnapshot.Visible = true;
-                CameraPreview.Visible = false;
+                setShowSnapShotDelegate d = new setShowSnapShotDelegate(showSnapshot);
+                this.Invoke(d, bShow);
             }
             else
             {
-                //CameraPreview.BringToFront();
-                CameraSnapshot.Visible = false;// BringToFront();
-                CameraPreview.Visible = true;
+                addLog("showSnapshot() called with " + bShow.ToString());
+                if (bShow)
+                {
+                    // CameraSnapshot.BringToFront();
+                    CameraSnapshot.Visible = true;
+                    CameraPreview.Visible = false;
+                }
+                else
+                {
+                    //CameraPreview.BringToFront();
+                    CameraSnapshot.Visible = false;// BringToFront();
+                    CameraPreview.Visible = true;
+                }
+                _bIsSnapshotView = bShow;
+                addLog("showSnapshot() call end.");
             }
-            _bIsSnapshotView = bShow;
-            addLog("showSnapshot() call end.");
 #else
             return;
 #endif

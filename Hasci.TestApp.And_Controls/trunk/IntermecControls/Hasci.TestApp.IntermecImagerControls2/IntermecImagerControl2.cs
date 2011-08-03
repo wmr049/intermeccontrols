@@ -54,6 +54,10 @@ namespace Hasci.TestApp.IntermecImagerControls2
         /// var to avoid multiple calls to SnapShot()
         /// </summary>
         private bool _bTakingSnapShot = false;
+        /// <summary>
+        /// var to avoid multiple calls into start a preview
+        /// </summary>
+        private bool _bIsInPreview = false;
 
         #region scanbutton
         ITC_KEYBOARD.CUSBkeys.usbKeyStruct _OldUsbKey = new ITC_KEYBOARD.CUSBkeys.usbKeyStruct();
@@ -197,10 +201,10 @@ namespace Hasci.TestApp.IntermecImagerControls2
                 do
                 {
                     //Sleep as long as a snapshot is pending
-                    while (_bTakingSnapShot && _continueWait)
-                    {
-                        Thread.Sleep(50);
-                    }
+                    //while (_bTakingSnapShot && _continueWait)
+                    //{
+                    //    Thread.Sleep(50);
+                    //}
                     if (!_continueWait)
                         Thread.CurrentThread.Abort();
                     addLog("waitLoop WaitForMultipleObjects...");
@@ -215,13 +219,25 @@ namespace Hasci.TestApp.IntermecImagerControls2
                         {
                             addLog("######### Caught StateLeftScan ########");
                             if (!_bTakingSnapShot)
-                                onStateScan();
+                                if (!_bIsInPreview)
+                                {
+                                    _bIsInPreview = true;
+                                    onStateScan();
+                                }
+                                else
+                                    _events[0].ResetEvent();
                         }
                         if (signaledEvent == _events[1])
                         {
                             addLog("######### Caught DeltaLeftScan ########");
                             if (!_bTakingSnapShot)
+                            {
+                                _bTakingSnapShot = true;
+                                _bIsInPreview = false;
                                 onDeltaScan();
+                            }
+                            else
+                                _events[1].ResetEvent();
                         }
                         if (signaledEvent == _events[2])
                         {
