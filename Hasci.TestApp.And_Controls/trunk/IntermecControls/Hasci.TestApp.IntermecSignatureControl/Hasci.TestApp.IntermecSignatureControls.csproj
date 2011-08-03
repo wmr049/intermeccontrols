@@ -104,7 +104,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)_S2L\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -87,7 +87,16 @@ namespace Hasci.TestApp.IntermecUtilityControls
         static extern bool ShowWindow(IntPtr hWnd, WindowShowStyle nCmdShow);
         [DllImport("coredll.dll")]
         private static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
-
+        enum GetWindow_Cmd : uint
+        {
+            GW_HWNDFIRST = 0,
+            GW_HWNDLAST = 1,
+            GW_HWNDNEXT = 2,
+            GW_HWNDPREV = 3,
+            GW_OWNER = 4,
+            GW_CHILD = 5,
+            GW_ENABLEDPOPUP = 6
+        }
         private enum WindowShowStyle : uint
         {
             /// <summary>Hides the window and activates another window.</summary>
