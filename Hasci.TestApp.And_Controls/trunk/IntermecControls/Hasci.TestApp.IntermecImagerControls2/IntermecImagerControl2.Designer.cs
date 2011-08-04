@@ -29,18 +29,29 @@
         private void InitializeComponent()
         {
             this.ImagerPreview = new System.Windows.Forms.PictureBox();
+            this.ImagerSnapshot = new System.Windows.Forms.PictureBox();
             this.SuspendLayout();
             // 
             // ImagerPreview
             // 
+            this.ImagerPreview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.ImagerPreview.Location = new System.Drawing.Point(18, 26);
             this.ImagerPreview.Name = "ImagerPreview";
             this.ImagerPreview.Size = new System.Drawing.Size(320, 211);
             this.ImagerPreview.Paint += new System.Windows.Forms.PaintEventHandler(this.ImagerPreview_Paint);
             // 
+            // ImagerSnapshot
+            // 
+            this.ImagerSnapshot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.ImagerSnapshot.Location = new System.Drawing.Point(80, 95);
+            this.ImagerSnapshot.Name = "ImagerSnapshot";
+            this.ImagerSnapshot.Size = new System.Drawing.Size(320, 211);
+            this.ImagerSnapshot.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            // 
             // IntermecImagerControl2
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.Controls.Add(this.ImagerSnapshot);
             this.Controls.Add(this.ImagerPreview);
             this.Name = "IntermecImagerControl2";
             this.Size = new System.Drawing.Size(480, 400);
@@ -52,5 +63,6 @@
         #endregion
 
         private System.Windows.Forms.PictureBox ImagerPreview;
+        private System.Windows.Forms.PictureBox ImagerSnapshot;
     }
 }
