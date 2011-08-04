@@ -207,19 +207,24 @@ namespace Hasci.TestApp.IntermecUtilityControls
             }
             if (hWndSIP != IntPtr.Zero)
             {
-                IntPtr hSipButton = GetWindow(hWndSIP, 5);
+                IntPtr hSipButton = GetWindow(hWndSIP, (uint)GetWindow_Cmd.GW_CHILD);
                 if (hSipButton != IntPtr.Zero)
                 {
+                    addLog("showSIPWindow: MS_SIPBUTTON ChildWindow found =" + string.Format("0x{0:X}", hSipButton));
                     if (bShow)
+                    {
                         if (ShowWindow(hSipButton, WindowShowStyle.ShowNormal))
                             addLog("showSIPWindow: show SIPbutton OK.");
                         else
                             addLog("showSIPWindow: failed to show SIPbutton. LastError=" + Marshal.GetLastWin32Error().ToString());
+                    }
                     else
+                    {
                         if (ShowWindow(hSipButton, WindowShowStyle.Hide))
                             addLog("showSIPWindow: hide SIPbutton OK.");
                         else
                             addLog("showSIPWindow: failed to hide SIPbutton. LastError=" + Marshal.GetLastWin32Error().ToString());
+                    }
                 }
                 else
                     addLog("showSIPWindow: failed to find SIPbutton window. LastError=" + Marshal.GetLastWin32Error().ToString());
