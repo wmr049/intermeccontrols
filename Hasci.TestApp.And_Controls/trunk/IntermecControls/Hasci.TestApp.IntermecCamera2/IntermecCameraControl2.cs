@@ -1,4 +1,4 @@
-ï»¿#define USEGDI
+#define USEGDI
 //do not switch streaming! see also "ALL THE TIME"
 #define STREAMING_ON
 //#define MYDEBUG
@@ -30,8 +30,8 @@ done by remapping the scanbutton to enter as the rest of the code works fine
 
 /* eMail Kirwa 22.07.2011
 Scanner & Kamera sollen gleich funktionieren	Kameraablauf anpassen.
-Anweisungstexte mÃ¼ssen angepasst werden:
-â€žFokussieren Sie mit gedrÃ¼ckter Scan-Taste. Beim Loslassen der Scan-Taste wird das Foto gemacht.â€œ
+Anweisungstexte müssen angepasst werden:
+„Fokussieren Sie mit gedrückter Scan-Taste. Beim Loslassen der Scan-Taste wird das Foto gemacht.“
 */
 
 #if USEGDI
