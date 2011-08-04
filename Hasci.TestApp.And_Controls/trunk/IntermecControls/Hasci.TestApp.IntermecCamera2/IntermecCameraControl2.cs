@@ -474,7 +474,7 @@ namespace Hasci.TestApp.IntermecPhotoControls2
                 addLog("KeyDown - showSnapshot(false)...");
                 showSnapshot(false); //show the preview and set
                 addLog("KeyDown - ImageIsInPreview()");
-                ImageIsInPreview();
+                //ImageIsInPreview(); //moved to showSnapshot()
             }
             //base.OnKeyDown(e);
             addLog("KeyDown - END");
@@ -835,11 +835,12 @@ namespace Hasci.TestApp.IntermecPhotoControls2
             _bLastState = true; //avoid multiple calls
 #if STREAMING_ON
             addLog("onStateScan: we DO NOT SWITCH streaming");
+            
 #else
             addLog("onStateScan IntermecCamera.Streaming=True...");
             IntermecCamera.Streaming = true;
-#endif
             ImageIsInPreview();
+#endif
             addLog("...onStateScan ended");
         }
 
@@ -914,12 +915,14 @@ namespace Hasci.TestApp.IntermecPhotoControls2
                 // CameraSnapshot.BringToFront();
                 CameraSnapshot.Visible = true;
                 CameraPreview.Visible = false;
+                ImageIsReady();
             }
             else
             {
                 //CameraPreview.BringToFront();
                 CameraSnapshot.Visible = false;// BringToFront();
                 CameraPreview.Visible = true;
+                ImageIsInPreview();
             }
             _bIsSnapshotView = bShow;
             addLog("showSnapshot() call end.");
