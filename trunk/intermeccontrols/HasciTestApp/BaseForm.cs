@@ -14,6 +14,7 @@ namespace Hasci.TestApp
 {
     public partial class BaseForm : Form
     {
+
         protected static BaseForm startForm;
         protected bool Is653 = false;
         protected BaseForm nextForm;
@@ -54,6 +55,8 @@ namespace Hasci.TestApp
                 this.Deactivate -= new EventHandler(BaseForm_Deactivate);
                 targetForm.Activate();
                 targetForm.Visible = true;
+                //Kiosk Mode Stuff has to be done in the application and NOT in client or hosted controls
+                shFullScreen.hideStartButton(targetForm);
             }
             catch (Exception ex)
             {
