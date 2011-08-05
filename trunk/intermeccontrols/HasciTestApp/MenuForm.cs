@@ -53,8 +53,12 @@ namespace Hasci.TestApp
 
         void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            //System.Diagnostics.Debug.WriteLine("Got KeyDown, KeyValue=" + e.KeyValue);
             switch (e.KeyValue) 
             {
+                case 153:   //ignore orange key of Intermec Keyboards
+                    e.Handled = true;
+                    break;
                 case 66:
                 case 155:
                     if (exitKey == 0)
