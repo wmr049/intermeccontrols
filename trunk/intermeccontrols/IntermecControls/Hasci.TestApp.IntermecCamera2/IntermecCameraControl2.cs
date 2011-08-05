@@ -84,7 +84,7 @@ namespace Hasci.TestApp.IntermecPhotoControls2
         /// </summary>
 #if USE_ENTER_KEY
 #if REMAP_SCAN_TO_ENTERKEY
-        private string _PhotoKeyText = "ScanTaste";
+        private string _PhotoKeyText = "SCAN";
 #else
         private string _PhotoKeyText = "ENTER";
 #endif
