@@ -235,6 +235,7 @@ namespace Hasci.TestApp.IntermecPhotoControls2
                 IntermecCamera.SnapshotFile.Filename = _sFileTemplate;
                 IntermecCamera.SnapshotFile.FilenamePadding = Camera.FilenamePaddingType.IncrementalCounter;// None;// Camera.FilenamePaddingType.IncrementalCounter;
 
+                
 #if USE_ENTER_KEY
 #if USE_PRESS_N_HOLD
                 showSnapshot(true); //show a still image
@@ -256,6 +257,8 @@ namespace Hasci.TestApp.IntermecPhotoControls2
 #if REMAP_SCAN_TO_ENTERKEY
                 mapScan2Enter();
 #endif
+                //YetAnotherHelperClass.muteSpeakerVolume(true);
+
                 //######### TEST ####### does not fix problem with NO STREAM AT FIRST INIT()!
                 //addLog("Init() IntermecCamera.Streaming=true at END of INIT()...");
                 //IntermecCamera.Streaming = true;   //we use streaming=true ALL THE TIME
@@ -660,6 +663,8 @@ namespace Hasci.TestApp.IntermecPhotoControls2
 #if REMAP_SCAN_TO_ENTERKEY
             restoreScanKey();
 #endif
+            //YetAnotherHelperClass.muteSpeakerVolume(false);
+
             Cursor.Current = Cursors.Default;
             //base.Dispose(); do not use!!
             addLog("...Dispose() finished");
