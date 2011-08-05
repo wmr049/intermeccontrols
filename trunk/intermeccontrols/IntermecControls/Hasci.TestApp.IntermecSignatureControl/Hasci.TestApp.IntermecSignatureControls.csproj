@@ -48,6 +48,28 @@
     <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'KeymapDebug|AnyCPU' ">
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\KeymapDebug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;PocketPC</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'KeyMapRelease|AnyCPU' ">
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <OutputPath>bin\KeyMapRelease\</OutputPath>
+    <DefineConstants>TRACE;PocketPC</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hasci.TestApp.DeviceControlContracts, Version=1.0.4210.16294, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
