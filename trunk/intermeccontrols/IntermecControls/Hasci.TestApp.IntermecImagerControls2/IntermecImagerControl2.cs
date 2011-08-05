@@ -90,6 +90,11 @@ namespace Hasci.TestApp.IntermecImagerControls2
         /// </summary>
         private bool _bIsSnapshotView = false;
 
+        /// <summary>
+        /// signal waiting code that the SnapShotThread is running or stopped
+        /// </summary>
+        private bool _bSnapShotThreadRunning = false;
+
         #endregion VARS
 
         public IntermecImagerControl2()
@@ -478,7 +483,9 @@ namespace Hasci.TestApp.IntermecImagerControls2
                 addLog("DoSnapShot: SnapShot already running");
                 return;
             }
+            _bSnapShotThreadRunning = true;
             _bTakingSnapShot = true;
+            Cursor.Current = Cursors.WaitCursor;
             try
             {
                 if (File.Exists(_TempFileName))
@@ -491,7 +498,8 @@ namespace Hasci.TestApp.IntermecImagerControls2
                     addLog("DoSnapShot: no tempfile '" + _TempFileName + "' to delete");
                 }
                 addLog("DoSnapShot: invoking '_imager.SnapShot()'...");
-                _imager.SnapShot(_TempFileName, Imager.PictureResolutionSize.Full, Imager.FileModeType.JPG); //this line will block for a second or two
+                //_imager.SnapShot(_TempFileName, Imager.PictureResolutionSize.Full, Imager.FileModeType.JPG); //this line will block for a second or two
+                _imager.SnapShot(_TempFileName, Imager.PictureResolutionSize.Quarter, Imager.FileModeType.JPG); //this line will block for a second or two
                 addLog("DoSnapShot: '_imager.SnapShot()' done");
                 //wait until the file is ready
                 int TryCount = 0;
@@ -540,6 +548,8 @@ namespace Hasci.TestApp.IntermecImagerControls2
             }
             _bTakingSnapShot = false;
             _bLastState = false; //enable next press and hold action
+            _bSnapShotThreadRunning = false;
+            Cursor.Current = Cursors.Default;
             addLog("DoSnapShot: has been ended.");
         }
 
@@ -657,7 +667,17 @@ namespace Hasci.TestApp.IntermecImagerControls2
             //kill SnapShot Thread
             if (snapshotThread != null)
             {
-                snapshotThread.Abort();
+                int iCount = 0;
+                while (iCount < 10 && _bSnapShotThreadRunning)
+                {
+                    Thread.Sleep(500);
+                    iCount++;
+                }
+                if (_bSnapShotThreadRunning)
+                {
+                    if (snapshotThread != null)
+                        snapshotThread.Abort();
+                }
             }
 #endif
             Thread.Sleep(100);

@@ -30,6 +30,7 @@
         {
             this.ImagerPreview = new System.Windows.Forms.PictureBox();
             this.ImagerSnapshot = new System.Windows.Forms.PictureBox();
+            this.lblVersion = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ImagerPreview
@@ -48,9 +49,19 @@
             this.ImagerSnapshot.Size = new System.Drawing.Size(320, 211);
             this.ImagerSnapshot.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             // 
+            // lblVersion
+            // 
+            this.lblVersion.Font = new System.Drawing.Font("Tahoma", 6F, System.Drawing.FontStyle.Regular);
+            this.lblVersion.Location = new System.Drawing.Point(8, 7);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(43, 23);
+            this.lblVersion.Text = "1.5";
+            this.lblVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // IntermecImagerControl2
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.ImagerSnapshot);
             this.Controls.Add(this.ImagerPreview);
             this.Name = "IntermecImagerControl2";
@@ -64,5 +75,6 @@
 
         private System.Windows.Forms.PictureBox ImagerPreview;
         private System.Windows.Forms.PictureBox ImagerSnapshot;
+        private System.Windows.Forms.Label lblVersion;
     }
 }
