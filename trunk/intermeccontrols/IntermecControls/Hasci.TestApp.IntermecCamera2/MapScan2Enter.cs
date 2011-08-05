@@ -62,7 +62,7 @@ namespace Hasci.TestApp.IntermecPhotoControls2
                 //change to a normal key with ENTER as 
                 _usbKey.bScanKey = CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1;
                 _usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
-                _usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoFlag;
+                _usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.Silent;// NoFlag;
                 _usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
                 _usbKey.bIntScan = 0x5A;// _usbKeyENTER.bIntScan;
                 addLog("_usbKey after change to ENTER:");
