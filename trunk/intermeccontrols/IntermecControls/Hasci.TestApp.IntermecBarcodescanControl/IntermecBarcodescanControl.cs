@@ -1,0 +1,626 @@
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+
+using System.ComponentModel.Composition;
+
+using Intermec.DataCollection;
+using System.Threading;
+using NativeSync;
+
+using ITC_KEYBOARD;
+
+namespace Hasci.TestApp.IntermecBarcodeScanControls
+{
+    /// <summary>
+    /// This is the Intermec Barcode Reader Control for MEF
+    /// After init you can press the BarcodeScannerButton to start Barcode Scanning
+    /// If a barcode is recognized, the scan will stop
+    /// If you release the BarcodeScannerButton before a Barcode is recognized, you will 
+    /// get a unsuccessfull barcode scan
+    /// 
+    /// Interface:
+    /// + EventHandler ScanReady
+    ///   fired at the end of a successfull or stopped scan
+    /// + string BarcodeText
+    ///   delivers the barcode data as string or, if unsuccessfull scan, the string "Barcode nicht anzeigbar"
+    /// + bool IsSuccess
+    ///   will be true for successfull barcode scan, false for unsuccessfull barcode scans
+    /// </summary>
+    [PartCreationPolicy(CreationPolicy.NonShared)]
+    [Export(typeof(Hasci.TestApp.DeviceControlContracts.IBarcodeScanControl))]
+    public partial class IntermecBarcodescanControl : UserControl, Hasci.TestApp.DeviceControlContracts.IBarcodeScanControl
+    {
+        /// <summary>
+        /// the barcode reader object
+        /// </summary>
+        BarcodeReader bcr;// = new BarcodeReader();
+        /// <summary>
+        /// a fixed error text for failed barcode scans
+        /// </summary>
+        private const string _sErrorText = "Barcode nicht anzeigbar";
+        /// <summary>
+        /// internal var to hold current barcode data
+        /// </summary>
+        private string _BarcodeText = "Barcode nicht anzeigbar";
+        /// <summary>
+        /// internal var to hold good/bad scan
+        /// </summary>
+        private bool _IsSuccess = false;
+        /// <summary>
+        /// control var to avoid multiple calls to barcode scans
+        /// </summary>
+        private bool _bReadingBarcode = false;
+        /// <summary>
+        /// thread stop var
+        /// </summary>
+        bool _continueWait = true;
+        /// <summary>
+        /// thread that starts a barcode read
+        /// </summary>
+        Thread readThread;
+        /// <summary>
+        /// thread that watches the scan button
+        /// </summary>
+        System.Threading.Thread waitThread;
+
+        /// <summary>
+        /// we have to save and restore the keyboard mapping of the scan button
+        /// </summary>
+        ITC_KEYBOARD.CUSBkeys.usbKeyStruct _OldUsbKey = new ITC_KEYBOARD.CUSBkeys.usbKeyStruct();
+
+        public IntermecBarcodescanControl()
+        {
+            InitializeComponent();
+            try
+            {
+                addLog("IntermecBarcodescanControl: setHWTrigger(true)...");
+                //enable HW trigger, a workaround as HW trigger is sometimes disabled on BarcodeReader.Dispose()
+                //if (!S9CconfigClass.S9Cconfig.HWTrigger.setHWTrigger(true))
+                //{
+                //    addLog("IntermecBarcodescanControl: setHWTrigger(true)...FAILED. Trying again");
+                //    Thread.Sleep(50);
+                //    S9CconfigClass.S9Cconfig.HWTrigger.setHWTrigger(true); //try again
+                //}
+                //replaced above code with the following, there were problems with load/unload the ADCComInterface inside S9CConfig
+                YetAnotherHelperClass.setHWTrigger(true);
+                //change number of good read beeps to zero
+                YetAnotherHelperClass.setNumberOfGoodReadBeeps(0);
+                addLog("IntermecBarcodescanControl: mapKey()...");
+                //we need full control of scan start and end
+                mapKey();
+            }
+            catch (Exception ex)
+            {
+                addLog("Exception in IntermecBarcodescanControl: setHWTrigger(true)..." + ex.Message);
+            }
+            try
+            {
+                addLog("IntermecBarcodescanControl: new BarcodeReader()...");
+                bcr = new BarcodeReader(this, "default");// ();
+                addLog("IntermecBarcodescanControl: BarcodeReader adding event handlers...");
+                bcr.BarcodeRead += new BarcodeReadEventHandler(bcr_BarcodeRead);
+                bcr.BarcodeReadCanceled += new BarcodeReadCancelEventHandler(bcr_BarcodeReadCanceled);
+                bcr.BarcodeReadError += new BarcodeReadErrorEventHandler(bcr_BarcodeReadError);
+                addLog("IntermecBarcodescanControl: starting named event watch thread...");
+                waitThread = new System.Threading.Thread(waitLoop);
+                waitThread.Start();
+                addLog("IntermecBarcodescanControl: enabling Scanner...");
+                bcr.ScannerEnable = true;
+                addLog("IntermecBarcodescanControl: ScannerOn=false...");
+                bcr.ScannerOn = false;
+
+            }
+            catch (BarcodeReaderException ex)
+            {
+                bcr = null;
+                System.Diagnostics.Debug.WriteLine("BarcodeReaderException in IntermecScanControl(): " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                bcr = null;
+                System.Diagnostics.Debug.WriteLine("Exception in IntermecScanControl(): " + ex.Message);
+            }
+            if (bcr == null)
+            {
+                addLog("IntermecBarcodescanControl: BarcodeReader init FAILED");
+                throw new System.IO.FileNotFoundException("Intermec.Datacollection.dll or ITCScan.DLL missing");
+            }
+        }
+
+        /// <summary>
+        /// restore scan button mapping to point to named event 1
+        /// </summary>
+        void restoreKey()
+        {
+            ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
+            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKey = new CUSBkeys.usbKeyStruct();
+            int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
+            //change the scan button back to the original events
+            if (iIdx != -1)
+            {
+                _usbKey = _OldUsbKey; //save for later restore
+                addLog("scanbutton key index is " + iIdx.ToString());
+                //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+                //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
+                //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
+                _usbKey.bIntScan = 1;
+                for (int i = 0; i < _cusb.getNumPlanes(); i++)
+                {
+                    addLog("using plane: " + i.ToString());
+                    if (_cusb.setKey(0, _usbKey.bScanKey, _usbKey) == 0)
+                        addLog("setKey for scanbutton key OK");
+                    else
+                        addLog("setKey for scanbutton key failed");
+                }
+                _cusb.writeKeyTables();
+            }
+            else
+            {
+                addLog("Could not get index for scanbutton key");
+            }
+        }
+        /// <summary>
+        /// change the event names of scanbutton to StateLeftScan1 and DeltaLeftScan1
+        /// </summary>
+        void mapKey()
+        {
+            ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
+            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKey = new CUSBkeys.usbKeyStruct();
+            int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
+            
+            //add two new events
+            string sReg = ITC_KEYBOARD.CUSBkeys.getRegLocation();
+            Microsoft.Win32.RegistryKey reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sReg + "\\Events\\State",true);
+            reg.SetValue("Event5", "StateLeftScan1");
+            reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sReg + "\\Events\\Delta",true);
+            reg.SetValue("Event5", "DeltaLeftScan1");
+            
+            //change the scan button to fire these events
+            if (iIdx != -1)
+            {
+                _OldUsbKey = _usbKey; //save for later restore
+                addLog("scanbutton key index is " + iIdx.ToString());
+                //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+                //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
+                //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
+                _usbKey.bIntScan = 5;
+                for (int i = 0; i < _cusb.getNumPlanes(); i++)
+                {
+                    addLog("using plane: " + i.ToString());
+                    if (_cusb.setKey(0, _usbKey.bScanKey, _usbKey) == 0)
+                        addLog("setKey for scanbutton key OK");
+                    else
+                        addLog("setKey for scanbutton key failed");
+                }
+                _cusb.writeKeyTables();
+            }
+            else
+            {
+                addLog("Could not get index for scanbutton key");
+            }
+        }
+        /// <summary>
+        /// for debug use we can log messages to DebugOut
+        /// </summary>
+        /// <param name="s"></param>
+        void addLog(string s)
+        {
+            System.Diagnostics.Debug.WriteLine(s);
+        }
+        /// <summary>
+        /// the main thread watching for state and delta events of scan button
+        /// </summary>
+        void waitLoop()
+        {
+            addLog("waitLoop starting...");
+            try
+            {
+                SystemEvent[] _events = new SystemEvent[3];
+                addLog("waitLoop setting up event array...");
+                _events[0] = new SystemEvent("StateLeftScan1", false, false);
+                _events[1] = new SystemEvent("DeltaLeftScan1", false, false);
+                _events[2] = new SystemEvent("EndWaitLoop52", false, false);
+                do
+                {
+                    addLog("waitLoop WaitForMultipleObjects...");
+                    SystemEvent signaledEvent = SyncBase.WaitForMultipleObjects(
+                                                -1,  // wait for ever
+                                                _events
+                                                 ) as SystemEvent;
+                    addLog("waitLoop WaitForMultipleObjects released: ");
+                    if (_continueWait)
+                    {
+                        if (signaledEvent == _events[0])
+                        {
+                            addLog("######### Caught StateLeftScan ########");
+                            onStateScan();
+                        }
+                        if (signaledEvent == _events[1])
+                        {
+                            addLog("######### Caught DeltaLeftScan ########");
+                            onDeltaScan();
+                        }
+                        if (signaledEvent == _events[2])
+                        {
+                            addLog("######### Caught EndWaitLoop52 ########");
+                            _continueWait = false;
+                        }
+                    }
+                    addLog("waitLoop sleep(1)");
+                    System.Threading.Thread.Sleep(1);
+                } while (_continueWait);
+                addLog("waitLoop while ended by _continueWait");
+            }
+            catch (ThreadAbortException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("waitLoop: ThreadAbortException: " + ex.Message);
+            }
+            catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine("waitLoop: Exception: " + ex.Message);
+            }
+            addLog("...waitLoop EXIT");
+        }
+        /// <summary>
+        /// called if a barcode read error (whatever that means) occured 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="breErr"></param>
+        void bcr_BarcodeReadError(object sender, BarcodeReadErrorEventArgs breErr)
+        {
+            addLog("bcr_BarcodeReadError: " + breErr.errMessage);
+        }
+        /// <summary>
+        /// eventhandler that is invoked on barcode CancelRead calls
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="bce"></param>
+        void bcr_BarcodeReadCanceled(object sender, BarcodeReadCancelEventArgs bce)
+        {
+            addLog("bcr_BarcodeReadCanceled...");
+            _BarcodeText = _sErrorText;
+            _IsSuccess = false;
+            ScanIsReady();
+            addLog("bcr_BarcodeReadCanceled: disable scanner");
+            scannerOnOff(false);
+            addLog("...bcr_BarcodeReadCanceled");
+        }
+        /// <summary>
+        /// eventhandler for a recognized barcode
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="bre">data about the barcode that has been read</param>
+        void bcr_BarcodeRead(object sender, BarcodeReadEventArgs bre)
+        {
+            addLog("bcr_BarcodeRead...");
+            // ###### changed to provide also 2D barcodes ##########
+            //int iSym = bre.SymbologyDetail;
+            //addLog("bcr_BarcodeRead: setting vars");
+            //if (barcodeID.is2Dcode(iSym))
+            //    _BarcodeText = "2D Code gescannt";
+            //else
+                _BarcodeText = Encoding.UTF8.GetString(bre.DataBuffer, 0, bre.BytesInBuffer);
+            changeText( _BarcodeText);
+            _IsSuccess = true;
+
+            addLog("bcr_BarcodeRead calling ScanIsReady()");
+            ScanIsReady();
+            addLog("...bcr_BarcodeRead end.");
+        }
+
+        /// <summary>
+        /// switch scanner off and Cancel a current Read
+        /// </summary>
+        /// <param name="bOnOff"></param>
+        private void scannerOnOff(bool bOnOff)
+        {
+            if(bOnOff)
+                addLog("scannerOnOff called with TRUE...");
+            else
+                addLog("scannerOnOff called with FALSE...");
+            if (bcr != null)
+            {
+                bcr.ScannerOn = bOnOff;
+                bcr.ScannerEnable = bOnOff;
+                if (!bOnOff)
+                {                    
+                    if(_bReadingBarcode)
+                        bcr.CancelRead(true);
+                }
+            }
+            addLog("...scannerOnOff ended");
+        }
+        /// <summary>
+        /// this thread simply starts a one shot trial to scan a barcode
+        /// </summary>
+        private void readBarcodeThread()
+        {
+            addLog("readBarcodeThread starting...");
+            if (bcr == null)
+            {
+                addLog("...readBarcodeThread returned for bcr==null");
+                return;
+            }
+            if (_bReadingBarcode)
+            {
+                addLog("...readBarcodeThread returned for _bReadingBarcode (in progress)");
+                return;
+            }
+            addLog("readBarcodeThread setting up vars...");
+            _bReadingBarcode = true;
+            _BarcodeText = "";
+            _IsSuccess = false;
+            try
+            {
+                addLog("readBarcodeThread: enabling BarcodeReader and ScannerOn...");
+                scannerOnOff(true);
+                //start a scan
+                addLog("readBarcodeThread: allow one Read...");
+                bcr.ThreadedRead(false);
+            }
+            catch (ThreadAbortException ex)
+            {
+                addLog("readBarcodeThread: ThreadAbortException:"+ex.Message);
+            }
+            catch (Exception ex)
+            {
+                addLog("readBarcodeThread Exception:"+ex.Message);
+            }
+            addLog("...readBarcodeThread end");
+        }
+
+        /// <summary>
+        /// var to avoid mutiple calls into OnStateScan
+        /// </summary>
+        bool _bLastState = false;
+        /// <summary>
+        /// function that is called periodically during KeyPress
+        /// </summary>
+        void onStateScan()
+        {
+            addLog("onStateScan started...");
+            if (_bLastState)
+            { //already pressed
+                addLog("...onStateScan: already pressed (_bLastState)");
+                return;
+            }
+            changeText("");
+            _bLastState = true; //avoid multiple calls
+            //start a scan
+            addLog("onStateScan starting Read thread...");
+            readThread = new Thread(readBarcodeThread);
+            readThread.Start();
+            addLog("...onStateScan ended");
+        }
+        /// <summary>
+        /// function that is called on every KeyRelease
+        /// </summary>
+        void onDeltaScan()
+        {
+            addLog("onDeltaScan started...");
+            //stop scan
+            addLog("onDeltaScan checking thread...");
+            if (readThread != null)
+            {
+                addLog("onDeltaScan ending thread...");
+                readThread.Abort();
+            }
+            addLog("onDeltaScan testing _IsSuccess ...");
+            if (!_IsSuccess)
+            {
+                addLog("onDeltaScan invoking CancelRead()");
+                bcr.CancelRead(true);
+            }
+            _bLastState = false;
+        }
+        /// <summary>
+        /// this text gives the barcode data
+        /// </summary>
+        public string BarcodeText
+        {
+            get { return _BarcodeText; }
+        }
+        /// <summary>
+        /// return a bool for a good/bad scan
+        /// </summary>
+        public bool IsSuccess
+        {
+            get { return _IsSuccess; }
+        }
+        //Create an event
+        public event EventHandler ScanReady;
+
+        /// <summary>
+        /// this will be called for successful and faulty scans
+        /// </summary>
+        private void ScanIsReady()
+        {
+            addLog("ScanIsReady started...");
+            OnScanReady(new EventArgs());
+            _bReadingBarcode = false;
+        }
+        protected virtual void OnScanReady(EventArgs e)
+        {
+            if (ScanReady != null)
+            {
+                ScanReady(this, e);
+            }
+        }
+        public new void Dispose()
+        {
+            addLog("IntermecScanControl Dispose()...");
+            _continueWait = false; //signal thread to stop
+            SystemEvent waitEvent = new SystemEvent("EndWaitLoop52", false, false);
+            waitEvent.PulseEvent();
+            System.Threading.Thread.Sleep(100);
+
+            if (bcr != null)
+            {
+                addLog("IntermecScanControl Dispose(): Calling ScannerOnOff(false)...");
+                scannerOnOff(false);
+                addLog("IntermecScanControl Dispose(): Disposing BarcodeReader...");
+                //bcr.ThreadedRead(false);
+                bcr.BarcodeRead -= bcr_BarcodeRead;
+                bcr.Dispose();
+                bcr = null;
+                addLog("IntermecScanControl Dispose(): BarcodeReader disposed");
+            }
+            try
+            {
+                addLog("IntermecScanControl Dispose(): enabling HardwareTrigger...");
+                //replaced this call as ADCComInterface made problems
+                //S9CconfigClass.S9Cconfig.HWTrigger.setHWTrigger(true);
+                YetAnotherHelperClass.setHWTrigger(true);
+                YetAnotherHelperClass.setNumberOfGoodReadBeeps(1);
+            }
+            catch (Exception ex)
+            {
+                addLog("IntermecScanControl Dispose(), Exception: enabling HardwareTrigger: "+ex.Message);
+            }
+            addLog("IntermecScanControl Dispose(): restoring Scan Button Key...");
+            restoreKey();
+            addLog("IntermecScanControl Dispose(): ending Threads...");
+            if (waitThread != null)
+            {
+                addLog("IntermecScanControl Dispose(): ending event watch thread ...");
+                waitThread.Abort();
+            }
+            if (readThread != null)
+            {
+                addLog("IntermecScanControl Dispose(): ending Barcode reading thread ...");
+                readThread.Abort();
+            }
+            addLog("...IntermecScanControl Dispose(): end.");
+            //base.Dispose(); do not use!!
+        }
+        delegate void SetTextCallback(string text);
+        private void changeText(string text)
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (this.txtBoxScan.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(addLog);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                txtBoxScan.Text = text;
+            }
+        }
+    }
+
+    [Obsolete("currently unused")]
+    /// <summary>
+    /// helper class to differ between 1D and 2D barcodes
+    /// 
+    /// </summary>
+    public static class barcodeID{
+        public static bool is2Dcode(int iCode){
+            bool bRet=false;
+            switch(iCode){
+                case 33:
+                case 36:
+                case 40:
+                case 41:
+                    bRet = true;
+                    break;
+                default:
+                    bRet = false;
+                    break;
+            }
+            return bRet;
+        }
+        enum tagStcIdentifier
+        {
+           ID_NULL                 = 0, //Not supported
+           ID_EAN13                = 1,
+           ID_EAN8                 = 2,
+           ID_UPCA                 = 3,
+           ID_UPCE                 = 4,
+           ID_EAN13_ADD2           = 5,
+           ID_EAN8_ADD2            = 6,
+           ID_UPCA_ADD2            = 7,
+           ID_UPCE_ADD2            = 8,
+           ID_EAN13_ADD5           = 9,
+           ID_EAN8_ADD5            = 10,
+           ID_UPCA_ADD5            = 11,
+           ID_UPCE_ADD5            = 12,
+           ID_39                   = 13,
+           ID_RESERVED1            = 14, //Not supported
+           ID_ITF                  = 15,
+           ID_25S                  = 16,
+           ID_25M                  = 17,
+           ID_RESERVED2            = 18, //Not supported
+           ID_CODABAR              = 19,
+           ID_AMES                 = 20, //Not supported
+           ID_MSI                  = 21,
+           ID_PLESSEY              = 22,
+           ID_128                  = 23,
+           ID_16K                  = 24, //Not supported
+           ID_93                   = 25,
+           ID_11                   = 26,
+           ID_TELEPEN              = 27,
+           ID_49                   = 28, //Not supported
+           ID_39CPI                = 29,  
+           ID_CDBCK_A              = 30,
+           ID_CDBCK_F              = 31,
+           ID_CDBCK_256            = 32, //Not supported
+           ID_PDF                  = 33,                    //2D
+           ID_GS1_128              = 34,
+           ID_ISBT128              = 35,
+           ID_MICRO_PDF = 36,                               //2D
+           ID_GS1_OD               = 37,
+           ID_GS1_LI               = 38,
+           ID_GS1_EX               = 39,
+           ID_DATAMATRIX = 40,                              //2D
+           ID_QR = 41,                                      //2D
+           ID_MAXICODE             = 42,
+           ID_GS1_OD_CCA           = 43,
+           ID_GS1_LI_CCA           = 44,
+           ID_GS1_EX_CCA           = 45,
+           ID_GS1_128_CCA          = 46,
+           ID_EAN13_CCA            = 47,
+           ID_EAN8_CCA             = 48,
+           ID_UPCA_CCA             = 49,
+           ID_UPCE_CCA             = 50,
+           ID_GS1_OD_CCB           = 51,
+           ID_GS1_LI_CCB           = 52,
+           ID_GS1_EX_CCB           = 53,
+           ID_GS1_128_CCB          = 54,
+           ID_EAN13_CCB            = 55,
+           ID_EAN8_CCB             = 56,
+           ID_UPCA_CCB             = 57,
+           ID_UPCE_CCB             = 58,
+           ID_GS1_128_CCC          = 59,
+           ID_ISBN                 = 60,
+           ID_POSTNET              = 61,
+           ID_PLANET               = 62,
+           ID_BPO                  = 63,
+           ID_CANADAPOST           = 64,
+           ID_AUSTRALIANPOST       = 65,
+           ID_JAPANPOST            = 66,
+           ID_DUTCHPOST            = 67,
+           ID_CHINAPOST            = 68,
+           ID_KOREANPOST           = 69, //Not supported
+           ID_TLC39                = 70,
+           ID_TRIOPTIC             = 71, //Not supported as a symbology, but as a derivative of code 39
+           ID_ISMN                 = 72,
+           ID_ISSN                 = 73,
+           ID_AZTEC                = 74,
+           ID_SWEDENPOST           = 75,
+           ID_INFOMAIL             = 76,
+           ID_MULTICODE            = 77,
+           ID_INCOMPLETE_MULTICODE = 78,
+           ID_INTELLIGENTMAIL      = 79,
+           ID_LAST                 = 79
+        } ;
+
+    }
+}
