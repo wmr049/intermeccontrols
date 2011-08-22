@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecBarcodeScanControls", "IntermecControls\Hasci.TestApp.IntermecBarcodescanControl\Hasci.TestApp.IntermecBarcodeScanControls.csproj", "{6B4DFD5D-4DD6-4C42-BF67-0F9DD3C71EA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecPhotoControls", "IntermecControls\Hasci.TestApp.IntermecCamera\Hasci.TestApp.IntermecPhotoControls.csproj", "{7F4335F7-C74B-4B5D-AD64-E0D35267615D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecImagerControls2", "IntermecControls\Hasci.TestApp.IntermecImagerControls2\Hasci.TestApp.IntermecImagerControls2.csproj", "{0B974C9C-8B7D-4DA9-BA05-3C3208858475}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecSignatureControls", "IntermecControls\Hasci.TestApp.IntermecSignatureControl\Hasci.TestApp.IntermecSignatureControls.csproj", "{1ABA136C-AFC1-4944-A7FC-A6F8127F5F7B}"
@@ -14,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HasciTestApp", "HasciTestApp\HasciTestApp.csproj", "{D592C010-826E-4350-BABB-FBC08C1B9014}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecPhotoControls2", "IntermecControls\Hasci.TestApp.IntermecCamera2\Hasci.TestApp.IntermecPhotoControls2.csproj", "{0D080EE3-E737-4388-8661-8344667BAB16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyTools", "KeyTools\KeyTools.csproj", "{7FFEBA0C-3BFE-404D-8DA8-1C7FBB137C6F}"
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
@@ -31,8 +31,6 @@ Global
 		{6B4DFD5D-4DD6-4C42-BF67-0F9DD3C71EA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B4DFD5D-4DD6-4C42-BF67-0F9DD3C71EA4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B4DFD5D-4DD6-4C42-BF67-0F9DD3C71EA4}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{7F4335F7-C74B-4B5D-AD64-E0D35267615D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F4335F7-C74B-4B5D-AD64-E0D35267615D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B974C9C-8B7D-4DA9-BA05-3C3208858475}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B974C9C-8B7D-4DA9-BA05-3C3208858475}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B974C9C-8B7D-4DA9-BA05-3C3208858475}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -63,6 +61,10 @@ Global
 		{0D080EE3-E737-4388-8661-8344667BAB16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D080EE3-E737-4388-8661-8344667BAB16}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0D080EE3-E737-4388-8661-8344667BAB16}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{7FFEBA0C-3BFE-404D-8DA8-1C7FBB137C6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FFEBA0C-3BFE-404D-8DA8-1C7FBB137C6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FFEBA0C-3BFE-404D-8DA8-1C7FBB137C6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FFEBA0C-3BFE-404D-8DA8-1C7FBB137C6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

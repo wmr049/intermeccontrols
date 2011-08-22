@@ -13,8 +13,6 @@ using Intermec.DataCollection;
 using System.Threading;
 using NativeSync;
 
-using ITC_KEYBOARD;
-
 namespace Hasci.TestApp.IntermecBarcodeScanControls
 {
     /// <summary>
@@ -69,11 +67,6 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls
         /// </summary>
         System.Threading.Thread waitThread;
 
-        /// <summary>
-        /// we have to save and restore the keyboard mapping of the scan button
-        /// </summary>
-        ITC_KEYBOARD.CUSBkeys.usbKeyStruct _OldUsbKey = new ITC_KEYBOARD.CUSBkeys.usbKeyStruct();
-
         public IntermecBarcodescanControl()
         {
             InitializeComponent();
@@ -93,7 +86,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls
                 YetAnotherHelperClass.setNumberOfGoodReadBeeps(0);
                 addLog("IntermecBarcodescanControl: mapKey()...");
                 //we need full control of scan start and end
-                mapKey();
+                ITCTools.KeyBoard.mapKey();
             }
             catch (Exception ex)
             {
@@ -133,78 +126,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls
             }
         }
 
-        /// <summary>
-        /// restore scan button mapping to point to named event 1
-        /// </summary>
-        void restoreKey()
-        {
-            ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
-            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKey = new CUSBkeys.usbKeyStruct();
-            int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
-            //change the scan button back to the original events
-            if (iIdx != -1)
-            {
-                _usbKey = _OldUsbKey; //save for later restore
-                addLog("scanbutton key index is " + iIdx.ToString());
-                //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
-                //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
-                //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
-                _usbKey.bIntScan = 1;
-                for (int i = 0; i < _cusb.getNumPlanes(); i++)
-                {
-                    addLog("using plane: " + i.ToString());
-                    if (_cusb.setKey(0, _usbKey.bScanKey, _usbKey) == 0)
-                        addLog("setKey for scanbutton key OK");
-                    else
-                        addLog("setKey for scanbutton key failed");
-                }
-                _cusb.writeKeyTables();
-            }
-            else
-            {
-                addLog("Could not get index for scanbutton key");
-            }
-        }
-        /// <summary>
-        /// change the event names of scanbutton to StateLeftScan1 and DeltaLeftScan1
-        /// </summary>
-        void mapKey()
-        {
-            ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
-            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKey = new CUSBkeys.usbKeyStruct();
-            int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
-            
-            //add two new events
-            string sReg = ITC_KEYBOARD.CUSBkeys.getRegLocation();
-            Microsoft.Win32.RegistryKey reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sReg + "\\Events\\State",true);
-            reg.SetValue("Event5", "StateLeftScan1");
-            reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sReg + "\\Events\\Delta",true);
-            reg.SetValue("Event5", "DeltaLeftScan1");
-            
-            //change the scan button to fire these events
-            if (iIdx != -1)
-            {
-                _OldUsbKey = _usbKey; //save for later restore
-                addLog("scanbutton key index is " + iIdx.ToString());
-                //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
-                //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
-                //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
-                _usbKey.bIntScan = 5;
-                for (int i = 0; i < _cusb.getNumPlanes(); i++)
-                {
-                    addLog("using plane: " + i.ToString());
-                    if (_cusb.setKey(0, _usbKey.bScanKey, _usbKey) == 0)
-                        addLog("setKey for scanbutton key OK");
-                    else
-                        addLog("setKey for scanbutton key failed");
-                }
-                _cusb.writeKeyTables();
-            }
-            else
-            {
-                addLog("Could not get index for scanbutton key");
-            }
-        }
+
         /// <summary>
         /// for debug use we can log messages to DebugOut
         /// </summary>
@@ -483,7 +405,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls
                 addLog("IntermecScanControl Dispose(), Exception: enabling HardwareTrigger: "+ex.Message);
             }
             addLog("IntermecScanControl Dispose(): restoring Scan Button Key...");
-            restoreKey();
+            ITCTools.KeyBoard.restoreKey();
             addLog("IntermecScanControl Dispose(): ending Threads...");
             if (waitThread != null)
             {
