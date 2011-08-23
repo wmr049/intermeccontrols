@@ -45,7 +45,9 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hasci.TestApp.DeviceControlContracts, Version=1.0.4230.26240, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Hasci.TestApp.DeviceControlContracts, Version=1.0.4230.26240, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="Intermec.DeviceManagement.SmartSystem.ITCSSApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acd169b56b6148ba">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Extensions\Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll</HintPath>
