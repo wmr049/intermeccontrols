@@ -35,17 +35,20 @@ namespace ITCTools
             if (iIdx != -1)
             {
                 _OldUsbKey = _usbKey; //save for later restore
-                //adjust the scan button:
+                //adjust the saved scan button:
                 _OldUsbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
                 _OldUsbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat | CUsbKeyTypes.usbFlagsMid.Silent;
                 _OldUsbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
                 _OldUsbKey.bIntScan = 1;
 
                 addLog("scanbutton key index is " + iIdx.ToString());
-                //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
-                //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
-                //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
-                _usbKey.bIntScan = 5;
+
+                //make a standard scan button
+                _usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+                _usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat | CUsbKeyTypes.usbFlagsMid.Silent;
+                _usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
+                _usbKey.bIntScan = 5;   //let it point to our named Events
+
                 for (int i = 0; i < _cusb.getNumPlanes(); i++)
                 {
                     addLog("using plane: " + i.ToString());
@@ -223,6 +226,22 @@ namespace ITCTools
         static void addLog(string s)
         {
             System.Diagnostics.Debug.WriteLine(s);
+        }
+        /// <summary>
+        /// just to debug, a function to dump a key struct
+        /// </summary>
+        /// <param name="cusb"></param>
+        static void dumpKey(CUSBkeys.usbKeyStruct cusb)
+        {
+            addLog(string.Format(
+                "Key struct is \n\tscankey={0}\n\tIntScan={1}\n\tflagHigh={2}\n\tflagMid={3}\n\tflagLow={4}",
+                cusb.bScanKey.ToString(),
+                cusb.bIntScan.ToString(),
+                cusb.bFlagHigh.ToString(),
+                cusb.bFlagMid.ToString(),
+                cusb.bFlagLow.ToString()
+                )
+                );
         }
     }
 }
