@@ -54,10 +54,10 @@
             this.lblVersion.Location = new System.Drawing.Point(9, 10);
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Size = new System.Drawing.Size(43, 23);
-            this.lblVersion.Text = "1.5";
+            this.lblVersion.Text = "3.0";
             this.lblVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // IntermecCameraControl
+            // IntermecCameraControl2
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.Controls.Add(this.lblVersion);

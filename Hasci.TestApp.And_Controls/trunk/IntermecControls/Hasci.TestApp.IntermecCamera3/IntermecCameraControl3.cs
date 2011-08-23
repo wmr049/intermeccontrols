@@ -34,22 +34,12 @@ Anweisungstexte müssen angepasst werden:
 „Fokussieren Sie mit gedrückter Scan-Taste. Beim Loslassen der Scan-Taste wird das Foto gemacht.“
 */
 
-#if USEGDI
 //imagefactory
 using OpenNETCF.Drawing;
 using OpenNETCF.Drawing.Imaging;
-#endif
 
-/*
- * changed to use Scan button 
- * on first press/release the preview starts
- * on second press/release the snapshot takes place
-*/
-#if USE_ENTER_KEY
-#else
+//keyboard mapping and Event handling stuff
 using NativeSync;
-using ITC_KEYBOARD;
-#endif
 using System.Threading;
 
 namespace Hasci.TestApp.IntermecPhotoControls3
@@ -82,15 +72,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
         /// <summary>
         /// the key that will handle preview on KeyDown and SnapShot on KeyUP
         /// </summary>
-#if USE_ENTER_KEY
-#if REMAP_SCAN_TO_ENTERKEY
-        private string _PhotoKeyText = "ScanTaste";
-#else
-        private string _PhotoKeyText = "ENTER";
-#endif
-#else
-        private string _PhotoKeyText = "ScanButton";
-#endif
+        private string _PhotoKeyText = "Scan";
         /// <summary>
         /// internal var to hold temporary filename
         /// </summary>
@@ -100,41 +82,29 @@ namespace Hasci.TestApp.IntermecPhotoControls3
         /// var to avoid multiple calls to SnapShot()
         /// </summary>
         private bool _bTakingSnapShot = false;
-#if USE_GDI
-#else
         /// <summary>
         /// indicate if we showing a snapshot or a preview stream
         /// </summary>
         private bool _bIsSnapshotView = false;
-#endif
-        bool _bFirstEnterUP = true;
-        bool _bEnterIsDown = false;
+
         /// <summary>
         /// the internal filename template, do not add(include a dot or an extension!
         /// </summary>
         private string _sFileTemplate = "FotoKamera";
 
-#if USE_ENTER_KEY
-#else
+        //some stuff needed to watch for the scan button events
         #region scanbutton
-        ITC_KEYBOARD.CUSBkeys.usbKeyStruct _OldUsbKey = new ITC_KEYBOARD.CUSBkeys.usbKeyStruct();
         System.Threading.Thread waitThread;
         bool _continueWait = true;
-
         #endregion
-#endif
         /// <summary>
         /// Init the CameraControl
         /// </summary>
         public IntermecCameraControl2()
         {
             InitializeComponent();
-#if USE_ENTER_KEY
-#else
             //disable HW Trigger of Scanner
-            //S9CconfigClass.S9Cconfig.HWTrigger.setHWTrigger(false);
             YetAnotherHelperClass.setHWTrigger(false);
-#endif
             try
             {
                 if (IntermecCamera != null)
@@ -235,27 +205,21 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                 IntermecCamera.SnapshotFile.Filename = _sFileTemplate;
                 IntermecCamera.SnapshotFile.FilenamePadding = Camera.FilenamePaddingType.IncrementalCounter;// None;// Camera.FilenamePaddingType.IncrementalCounter;
 
-#if USE_ENTER_KEY
-#if USE_PRESS_N_HOLD
                 showSnapshot(true); //show a still image
-#endif
-#else
-                //remap scan button key to new events
-                mapKey();
-                //start the scan button watch thread
-                addLog("IntermecBarcodescanControl: starting named event watch thread...");
-                waitThread = new System.Threading.Thread(waitLoop);
-                waitThread.Start();
-#endif
+
 #if STREAMING_ON
                 addLog("Init(): we DO NOT SWITCH streaming");
 #else
                 addLog("Init() IntermecCamera.Streaming=false...");
                 IntermecCamera.Streaming = false;   //we use streaming=true ALL THE TIME
 #endif
-#if REMAP_SCAN_TO_ENTERKEY
-                mapScan2Enter();
-#endif
+
+                ITCTools.KeyBoard.mapKey(); //map the scan button to Event Index 5
+
+                //start the scan button watch thread
+                addLog("IntermecBarcodescanControl: starting named event watch thread...");
+                waitThread = new System.Threading.Thread(waitLoop);
+                waitThread.Start();
                 //######### TEST ####### does not fix problem with NO STREAM AT FIRST INIT()!
                 //addLog("Init() IntermecCamera.Streaming=true at END of INIT()...");
                 //IntermecCamera.Streaming = true;   //we use streaming=true ALL THE TIME
@@ -322,9 +286,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
 
                 OnImageReady(new EventArgs());//inform about image is ready
 #if STREAMING_ON
-#if USEGDI
                 showImage(_fileName);
-#endif
 #endif
                 //the following will give Out-of-memory exceptions!
                 //CameraPreview.Image = new Bitmap(_fileName);
@@ -341,9 +303,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                 System.Diagnostics.Debug.WriteLine("SnapshotEvent not OK: " + snArgs.Status.ToString());
                 System.Diagnostics.Debug.WriteLine("File: '" + IntermecCamera.SnapshotFile.Directory +"' '"+ IntermecCamera.SnapshotFile.Filename+"'");
                 Cursor.Current = System.Windows.Forms.Cursors.Default;
-#if USEGDI
                 showSnapshot(false);
-#endif
             }
 #if STREAMING_ON
             addLog("SnapshotEvent: we DO NOT SWITCH streaming");
@@ -442,86 +402,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
 #endif
             }
         }
-#if USE_PRESS_N_HOLD
 
-        /// <summary>
-        /// handle onKeyDown and react on the Preview/SnapShot key
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                addLog("KeyDown - Keys.Enter");
-                if (_bEnterIsDown)
-                { //we are already down
-                    addLog("KeyDown - key was already down");
-                    return;
-                }
-                //is there a pending snapshot?
-                if (_bTakingSnapShot)
-                {
-                    addLog("KeyDown - already taking snapshot");
-                    return;
-                }
-                if (!_bIsSnapshotView)
-                {
-                    addLog("KeyDown - already showing a preview");
-                    return;
-                }
-                //remember key
-                _bEnterIsDown = true;
-                addLog("KeyDown - showSnapshot(false)...");
-                showSnapshot(false); //show the preview and set
-                addLog("KeyDown - ImageIsInPreview()");
-                //ImageIsInPreview(); //moved to showSnapshot()
-            }
-            //base.OnKeyDown(e);
-            addLog("KeyDown - END");
-        }
-#endif
-
-#if USE_ENTER_KEY
-        /// <summary>
-        /// handle onKeyUp and react on the Preview/Snapshot key
-        /// On first KeyUp start preview
-        /// On second KeyUp take snapshot and start Preview
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {                
-                _bEnterIsDown = false;
-#if USEGDI
-                if (_bIsSnapshotView)
-                {
-                    showSnapshot(false); //switch back to preview
-                    return;
-                }
-#endif
-                addLog("KeyUp - Keys.Enter");
-                //if (_bKeyWasDown)
-                //{
-                //    System.Diagnostics.Debug.WriteLine("KeyUp - Keys.Enter : _bKeyWasDown = false");
-                //    _bKeyWasDown = false;
-                //}
-                if (_bTakingSnapShot)
-                {
-                    System.Diagnostics.Debug.WriteLine("KeyUp - Keys.Enter : is taking snapshot, return");
-                    return;
-                }
-                _bTakingSnapShot = true;
-                //GC.Collect();
-                System.Diagnostics.Debug.WriteLine("KeyUp - Keys.Enter Taking SnapShot");
-                //within the snapshot event _bIsTakingSnapshot is reset
-                IntermecCamera.Snapshot(972, 1296); //according to eMail RVDP, Wednesday, August 03, 2011 1:23 AM
-                //IntermecCamera.Snapshot(Camera.ImageResolutionType.Highest);// Highest);
-                Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
-            }
-            //base.OnKeyUp(e);
-        }
-#endif
         /// <summary>
         /// this is called by the host to let this control save the picture
         /// we just rename the exisiting picture to the desired name
@@ -632,15 +513,17 @@ namespace Hasci.TestApp.IntermecPhotoControls3
         public new void Dispose()
         {
             addLog("Dispose() called...");
-#if USE_ENTER_KEY
-#else
-            _continueWait = false; //signal thread to stop
-            Thread.Sleep(100);
-            SystemEvent waitEvent = new SystemEvent("EndWaitLoop52", false, false);
-            waitEvent.PulseEvent();
-            Thread.Sleep(100);
-            restoreKey();
-#endif
+
+            if (waitThread != null)
+            {
+                _continueWait = false; //signal thread to stop
+                Thread.Sleep(100);
+                SystemEvent waitEvent = new SystemEvent("EndWaitLoop52", false, false);
+                waitEvent.PulseEvent();
+                Thread.Sleep(100);
+            }
+            //now the wait thread should been stopped
+
             if (IntermecCamera != null)
             {
 #if STREAMING_ON
@@ -651,15 +534,11 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                 IntermecCamera.Dispose();
                 IntermecCamera = null;
             }
-#if USE_ENTER_KEY
-#else
-            //enable HW Trigger of Scanner
-            //S9CconfigClass.S9Cconfig.HWTrigger.setHWTrigger(true);
+
             YetAnotherHelperClass.setHWTrigger(true);
-#endif
-#if REMAP_SCAN_TO_ENTERKEY
-            restoreScanKey();
-#endif
+
+            ITCTools.KeyBoard.restoreKey();
+
             Cursor.Current = Cursors.Default;
             //base.Dispose(); do not use!!
             addLog("...Dispose() finished");
@@ -835,7 +714,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             _bLastState = true; //avoid multiple calls
 #if STREAMING_ON
             addLog("onStateScan: we DO NOT SWITCH streaming");
-            
+            showSnapshot(false); // ImageIsInPreview() will be called there
 #else
             addLog("onStateScan IntermecCamera.Streaming=True...");
             IntermecCamera.Streaming = true;
@@ -901,34 +780,98 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                 //    e.Graphics.DrawString("Snapshot", new Font("Tahoma", 8, FontStyle.Regular), new SolidBrush(Color.GreenYellow), 10, 10);
             }
         }
+
+        delegate void setShowSnapshot(bool bShowHide);
         /// <summary>
         /// show the snapshot or preview picturebox in front 
         /// </summary>
         /// <param name="bShow">true for snapshot
         /// false for preview</param>
-        private void showSnapshot(bool bShow)
+        private void showSnapshot(bool bShowHide)
         {
-#if USEGDI
-            addLog("showSnapshot() called with " + bShow.ToString());
-            if (bShow)
+            if (this.InvokeRequired)
             {
-                // CameraSnapshot.BringToFront();
-                CameraSnapshot.Visible = true;
-                CameraPreview.Visible = false;
-                ImageIsReady();
+                setShowSnapshot d = new setShowSnapshot(showSnapshot);
+                this.Invoke(d, bShowHide);
             }
             else
             {
-                //CameraPreview.BringToFront();
-                CameraSnapshot.Visible = false;// BringToFront();
-                CameraPreview.Visible = true;
-                ImageIsInPreview();
-            }
-            _bIsSnapshotView = bShow;
-            addLog("showSnapshot() call end.");
+#if USEGDI
+                addLog("showSnapshot() called with " + bShowHide.ToString());
+                if (bShowHide)
+                {
+                    // CameraSnapshot.BringToFront();
+                    CameraSnapshot.Visible = true;
+                    CameraPreview.Visible = false;
+                    ImageIsReady();
+                }
+                else
+                {
+                    //CameraPreview.BringToFront();
+                    CameraSnapshot.Visible = false;// BringToFront();
+                    CameraPreview.Visible = true;
+                    ImageIsInPreview();
+                }
+                _bIsSnapshotView = bShowHide;
+                addLog("showSnapshot() call end.");
 #else
             return;
 #endif
+            }
+        }
+        /// <summary>
+        /// the main thread watching for state and delta events of scan button
+        /// </summary>
+        void waitLoop()
+        {
+            addLog("waitLoop starting...");
+            try
+            {
+                SystemEvent[] _events = new SystemEvent[3];
+                addLog("waitLoop setting up event array...");
+                _events[0] = new SystemEvent("StateLeftScan1", false, false);
+                _events[1] = new SystemEvent("DeltaLeftScan1", false, false);
+                _events[2] = new SystemEvent("EndWaitLoop52", false, false);
+                do
+                {
+                    addLog("waitLoop WaitForMultipleObjects...");
+                    SystemEvent signaledEvent = SyncBase.WaitForMultipleObjects(
+                                                -1,  // wait for ever
+                                                _events
+                                                 ) as SystemEvent;
+                    addLog("waitLoop WaitForMultipleObjects released: ");
+                    if (_continueWait)
+                    {
+                        if (signaledEvent == _events[0])
+                        {
+                            addLog("######### Caught StateLeftScan ########");
+                            onStateScan();
+                        }
+                        if (signaledEvent == _events[1])
+                        {
+                            addLog("######### Caught DeltaLeftScan ########");
+                            onDeltaScan();
+                        }
+                        if (signaledEvent == _events[2])
+                        {
+                            addLog("######### Caught EndWaitLoop52 ########");
+                            _continueWait = false;
+                        }
+                    }
+                    addLog("waitLoop sleep(1)");
+                    System.Threading.Thread.Sleep(1);
+                } while (_continueWait);
+                addLog("waitLoop while ended by _continueWait");
+            }
+            catch (ThreadAbortException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("waitLoop: ThreadAbortException: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("waitLoop: Exception: " + ex.Message);
+            }
+            addLog("...waitLoop EXIT");
         }
     }
 }

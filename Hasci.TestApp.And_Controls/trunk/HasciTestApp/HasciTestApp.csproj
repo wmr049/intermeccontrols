@@ -170,6 +170,7 @@
       <DependentUpon>Barcode.cs</DependentUpon>
     </Compile>
     <Compile Include="Savepath.cs" />
+    <Compile Include="shFullScreen.cs" />
     <Compile Include="Signature.cs">
       <SubType>Form</SubType>
     </Compile>
