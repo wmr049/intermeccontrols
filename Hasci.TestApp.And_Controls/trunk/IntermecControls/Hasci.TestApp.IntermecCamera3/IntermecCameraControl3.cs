@@ -312,6 +312,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             IntermecCamera.Streaming = false; //do not show streaming automatically
 #endif
             _bTakingSnapShot = false;
+            _bInDeltaProcessing = false;
             System.Diagnostics.Debug.WriteLine("...IntermecCamera_SnapshotEvent ended.");
         }
 
@@ -527,7 +528,8 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             if (IntermecCamera != null)
             {
 #if STREAMING_ON
-            addLog("...Dispose() we DO NOT SWITCH streaming");
+                addLog("...Dispose() we DO NOT SWITCH streaming");
+                IntermecCamera.Streaming = false;
 #else
                 IntermecCamera.Streaming = false;
 #endif
@@ -545,7 +547,12 @@ namespace Hasci.TestApp.IntermecPhotoControls3
         }
         void addLog(string s)
         {
-            System.Diagnostics.Debug.WriteLine(s);
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                System.Diagnostics.Debug.WriteLine(s);
+            }
+            else
+                System.Threading.Thread.Sleep(1);
         }
         void addLog2(string s)
         {
@@ -553,146 +560,6 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             System.Diagnostics.Debug.WriteLine(s);
 #endif
         }
-#if USE_ENTER_KEY
-#else
-        #region keyboard remapping
-        /// <summary>
-        /// restore scan button mapping to point to named event 1
-        /// </summary>
-        void restoreKey()
-        {
-            ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
-            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKey = new CUSBkeys.usbKeyStruct();
-            int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
-            //change the scan button back to the original events
-            if (iIdx != -1)
-            {
-                _usbKey = _OldUsbKey; //save for later restore
-                addLog("scanbutton key index is " + iIdx.ToString());
-                //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
-                //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
-                //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
-                _usbKey.bIntScan = 1;
-                for (int i = 0; i < _cusb.getNumPlanes(); i++)
-                {
-                    addLog("using plane: " + i.ToString());
-                    if (_cusb.setKey(0, _usbKey.bScanKey, _usbKey) == 0)
-                        addLog("setKey for scanbutton key OK");
-                    else
-                        addLog("setKey for scanbutton key failed");
-                }
-                _cusb.writeKeyTables();
-            }
-            else
-            {
-                addLog("Could not get index for scanbutton key");
-            }
-        }
-        /// <summary>
-        /// change the event names of scanbutton to StateLeftScan1 and DeltaLeftScan1
-        /// </summary>
-        void mapKey()
-        {
-            ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
-            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKey = new CUSBkeys.usbKeyStruct();
-            int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
-
-            //add two new events
-            string sReg = ITC_KEYBOARD.CUSBkeys.getRegLocation();
-            Microsoft.Win32.RegistryKey reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sReg + "\\Events\\State", true);
-            reg.SetValue("Event5", "StateLeftScan1");
-            reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sReg + "\\Events\\Delta", true);
-            reg.SetValue("Event5", "DeltaLeftScan1");
-
-            //change the scan button to fire these events
-            if (iIdx != -1)
-            {
-                _OldUsbKey = _usbKey; //save for later restore
-                addLog("scanbutton key index is " + iIdx.ToString());
-                //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
-                //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
-                //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
-                _usbKey.bIntScan = 5;
-                for (int i = 0; i < _cusb.getNumPlanes(); i++)
-                {
-                    addLog("using plane: " + i.ToString());
-                    if (_cusb.setKey(0, _usbKey.bScanKey, _usbKey) == 0)
-                        addLog("setKey for scanbutton key OK");
-                    else
-                        addLog("setKey for scanbutton key failed");
-                }
-                _cusb.writeKeyTables();
-            }
-            else
-            {
-                addLog("Could not get index for scanbutton key");
-            }
-        }
-        #endregion
-        //######################################################################
-        void waitLoop()
-        {
-            addLog("waitLoop starting...");
-            SystemEvent[] _events = new SystemEvent[3];
-            addLog("waitLoop setting up event array...");
-            _events[0] = new SystemEvent("StateLeftScan1", false, false);
-            _events[1] = new SystemEvent("DeltaLeftScan1", false, false);
-            _events[2] = new SystemEvent("EndWaitLoop52", false, false);
-            try
-            {
-                do
-                {
-                    //Sleep as long as a snapshot is pending
-                    while (_bTakingSnapShot && _continueWait)
-                    {
-                        Thread.Sleep(50);
-                    }
-                    if (!_continueWait)
-                        Thread.CurrentThread.Abort();
-                    addLog2("waitLoop WaitForMultipleObjects...");
-                    SystemEvent signaledEvent = SyncBase.WaitForMultipleObjects(
-                                                -1,  // wait for ever
-                                                _events
-                                                 ) as SystemEvent;
-                    addLog2("waitLoop WaitForMultipleObjects released: ");
-                    if (_continueWait)
-                    {
-                        if (signaledEvent == _events[0])
-                        {
-                            addLog2("######### Caught StateLeftScan ########");
-                            onStateScan();
-                        }
-                        if (signaledEvent == _events[1])
-                        {
-                            addLog2("######### Caught DeltaLeftScan ########");
-                            onDeltaScan();
-                        }
-                        if (signaledEvent == _events[2])
-                        {
-                            addLog2("######### Caught EndWaitLoop52 ########");
-                            _continueWait = false;
-                        }
-                    }
-                    addLog2("waitLoop sleep(5)");
-                    System.Threading.Thread.Sleep(5);
-                } while (_continueWait);
-                addLog("waitLoop while ended by _continueWait");
-            }
-            catch (ThreadAbortException ex)
-            {
-                System.Diagnostics.Debug.WriteLine("waitLoop: ThreadAbortException: " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("waitLoop: Exception: " + ex.Message);
-            }
-            finally
-            {
-                _events[0].Dispose(); _events[1].Dispose(); _events[2].Dispose();
-            }
-            addLog("...waitLoop EXIT");
-        }
-#endif
 
         bool _bLastState = false;
         void onStateScan()
@@ -712,6 +579,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                 addLog("...onStateScan: _bLastState toggled");
             }
             _bLastState = true; //avoid multiple calls
+
 #if STREAMING_ON
             addLog("onStateScan: we DO NOT SWITCH streaming");
             showSnapshot(false); // ImageIsInPreview() will be called there
@@ -723,15 +591,23 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             addLog("...onStateScan ended");
         }
 
+        bool _bInDeltaProcessing = false;
         void onDeltaScan()
         {
             addLog("onDeltaScan started...");
+            if (_bInDeltaProcessing)
+            { //already pressed
+                addLog2("...onDeltaScan: already released (_bInDeltaProcessing)");
+                return;
+            }
+            _bInDeltaProcessing = true;
             //return immediately, if we are taking a snapshot
             if (_bTakingSnapShot)
             {
                 addLog("onDeltaScan _bTakingSnapShot. Return...");
                 return;
             }
+
             ////is this the first call, only use below code to toggle preview/snapshot with DeltaScan event
             //if (bFirstDeltaToggle)
             //{
@@ -751,10 +627,17 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             {
                 if (_bTakingSnapShot)
                     return;
-                _bTakingSnapShot = true;
                 //issue a snapshot, async call!
-                if(IntermecCamera.Streaming)
+                if (IntermecCamera.Streaming)
+                {
+                    _bTakingSnapShot = true;
                     IntermecCamera.Snapshot(Camera.ImageResolutionType.Medium);// Highest);
+                }
+                else
+                {
+                    _bTakingSnapShot = false;
+                    _bInDeltaProcessing = false;
+                }
             }
             catch (CameraException ex)
             {
@@ -766,7 +649,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             }
             Cursor.Current = System.Windows.Forms.Cursors.Default;
 
-            _bLastState = false; //ready for next preview
+            //_bLastState = false; //ready for next preview
         }
 
         private void CameraPreview_Paint(object sender, PaintEventArgs e)
@@ -834,6 +717,14 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                 _events[2] = new SystemEvent("EndWaitLoop52", false, false);
                 do
                 {
+                    //Sleep as long as a snapshot is pending
+                    while (_bTakingSnapShot && _continueWait)
+                    {
+                        Thread.Sleep(50);
+                    }
+                    if (!_continueWait)
+                        Thread.CurrentThread.Abort();
+
                     addLog("waitLoop WaitForMultipleObjects...");
                     SystemEvent signaledEvent = SyncBase.WaitForMultipleObjects(
                                                 -1,  // wait for ever
