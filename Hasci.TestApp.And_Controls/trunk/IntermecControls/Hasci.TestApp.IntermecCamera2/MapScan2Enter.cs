@@ -47,7 +47,7 @@ namespace Hasci.TestApp.IntermecPhotoControls2
             
             //get the index of the scan button
             int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
-            //change the scan button to fire these events
+            //change the scan button to fire an ENTER
             if (iIdx != -1)
             {
                 _iScanButtonIndex = iIdx; //save for later use
