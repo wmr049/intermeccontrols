@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 0114,0219
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;

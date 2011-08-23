@@ -21,6 +21,7 @@ namespace ITCTools
         {
             ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
             ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKey = new CUSBkeys.usbKeyStruct();
+            //although we read the scan button setting here, we 'adjust' need to adjust it
             int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
 
             //add two new events
@@ -34,6 +35,12 @@ namespace ITCTools
             if (iIdx != -1)
             {
                 _OldUsbKey = _usbKey; //save for later restore
+                //adjust the scan button:
+                _OldUsbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+                _OldUsbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;
+                _OldUsbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
+                _OldUsbKey.bIntScan = 1;
+
                 addLog("scanbutton key index is " + iIdx.ToString());
                 //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
                 //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
@@ -48,6 +55,7 @@ namespace ITCTools
                         addLog("setKey for scanbutton key failed");
                 }
                 _cusb.writeKeyTables();
+                _cusb = null;
                 mapAllSide2SCAN();
             }
             else
@@ -68,16 +76,16 @@ namespace ITCTools
             //change the scan button back to the original events
             if (iIdx != -1)
             {
-                _usbKey = _OldUsbKey; //save for later restore
+                _usbKey = _OldUsbKey; //use saved var for restore
                 addLog("scanbutton key index is " + iIdx.ToString());
                 //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
                 //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
                 //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
                 _usbKey.bIntScan = 1;
-                for (int i = 0; i < _cusb.getNumPlanes(); i++)
+                for (int iPlane = 0; iPlane < _cusb.getNumPlanes(); iPlane++)
                 {
-                    addLog("using plane: " + i.ToString());
-                    if (_cusb.setKey(0, _usbKey.bScanKey, _usbKey) == 0)
+                    addLog("using plane: " + iPlane.ToString());
+                    if (_cusb.setKey(iPlane, _usbKey.bScanKey, _usbKey) == 0) //changed "setKey(0," to "setKey(i,"
                         addLog("setKey for scanbutton key OK");
                     else
                         addLog("setKey for scanbutton key failed");
@@ -119,6 +127,10 @@ namespace ITCTools
             //int iIndex = _cusbKeys.getKeyIndex(0, (int)ITC_KEYBOARD.CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1 /*0x90*/);
             _cusbKeys.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref usbScanKey);
 
+            //make a normal scan button
+            usbScanKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+            usbScanKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;
+            usbScanKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
             usbScanKey.bIntScan = 5; //map to Event 5
 
             for (int iPlane = 0; iPlane < iCount; iPlane++) //do for all planes
