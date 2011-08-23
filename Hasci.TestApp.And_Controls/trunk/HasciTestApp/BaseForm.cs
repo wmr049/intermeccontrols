@@ -30,6 +30,8 @@ namespace Hasci.TestApp
             {
                 if (ex is ChangeRejectedException)
                     MessageBox.Show("HW-Components not found!");
+                else
+                    MessageBox.Show("Exception in ComposeParts: " + ex.Message + "\n" + ex.StackTrace);
                 this.Close();
             }
         }

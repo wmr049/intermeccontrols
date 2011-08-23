@@ -37,7 +37,7 @@ namespace ITCTools
                 _OldUsbKey = _usbKey; //save for later restore
                 //adjust the scan button:
                 _OldUsbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
-                _OldUsbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;
+                _OldUsbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat | CUsbKeyTypes.usbFlagsMid.Silent;
                 _OldUsbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
                 _OldUsbKey.bIntScan = 1;
 
@@ -129,7 +129,7 @@ namespace ITCTools
 
             //make a normal scan button
             usbScanKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
-            usbScanKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;
+            usbScanKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat | CUsbKeyTypes.usbFlagsMid.Silent;
             usbScanKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
             usbScanKey.bIntScan = 5; //map to Event 5
 
