@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DevInfo Action="Set" Persist="true">
+	<Subsystem Name="Communications">
+	<Group Name="802.11 Radio">
+		<Field Name="Radio Enabled">0</Field>
+	</Group>
+	</Subsystem>
+</DevInfo>
