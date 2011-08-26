@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<DevInfo Action="Set" Persist="true">
+ <Subsystem Name="WWAN Radio">
+    <Group Name="Manage Radio State">
+      <Field Name="Radio Power State">0</Field> 
+    </Group>
+  </Subsystem>
+</DevInfo>

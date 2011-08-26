@@ -1,0 +1,273 @@
+<?xml version="1.0"?>
+<!-- \Flash File Store\UserAutoInstall\_sstransferagent.xml for Intermec Cx7x with any OS version -->
+<!-- This version uses files stored on FFS -->
+<!--
+	DPAG installer
+	version 3.0:
+		+ added KeyTools.DLL
+	version 2.50:
+		+ moved Commands to top
+		+ changed regset line to use SetRegKey
+	version 2.41
+		+ added " at end of keymap import lines
+	version 2.4
+		+ added ITC_KeybdClick.cab to enable Hardware Keybd Click sounds
+	version 2.3
+		+ added 6 different keymap xmls as KeyMapImport API did not work with one file incl. all definitions
+	version 2.2
+		+ using Hasci.TestApp.IntermecPhotoControls2.dll instead of Hasci.TestApp.IntermecPhotoControls.dll
+		  due to another change request by DPAG we have to use the ScanButton instead of Enter
+		  Hasci.TestApp.IntermecPhotoControls2.dll = ScanButton is mapped to Enter
+		  Hasci.TestApp.IntermecPhotoControls.dll = Enter is only button supported
+	version 2.1
+		+ moved keymapimport stuff AFTER 03_KBDTools install
+	version 2.0
+		+ added keymapimport stuff
+		+ removed obsolete lnk file copy
+	version 1.8
+		+ moved config xml to top of file as they need 2 minutes or more to load
+		+ changed to use 02_CNxDShow_CIL1.98.CAB instead of 02_CNxDShow.CAB
+	version 1.7
+		+ wrong file copy: 
+		  Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll was copied as 
+		  Intermec.DeviceManagement.ITCSSApi.dll
+	version 1.6
+		+ IDL_HGO.cab will break ITC50 ITCSCAN
+		  NOW we do NOT autoinstall idl.cab.pkg, YOU have to install it manually one time after a cleanboot
+		  idl.cab.pkg is cleanboot persistent
+	version 1.5
+	changes
+		+ replaced 02_CNxDShow.cab with version got from Ron VanDerPutten on 01. aug. 2011
+		+ replaced idl.cab.pkg by idl_hgo.cab, see notes below
+		+ added Boot="Warm"
+-->
+<Devices>
+    <Device Type="C" Family="*" Model="7*" Boot="Warm">
+    <Commands> 
+		<!-- Example: Enable BootSettings XML processing -->
+		<!-- <SetRegKey KeyName="Software\Intermec\SSClient" ValueName="BootSettings" Value="1" Type="DWORD"/> -->
+
+		<!-- enable logging -->
+		<SetRegKey KeyName="Software\Intermec\SSClient" ValueName="SaveCfgFiles" Value="1" Type="REG_SZ" />
+
+
+		<!-- Example: how to copy a directory -->
+		<!-- Copy user CAB files to \CabFiles directory for installation later by AutoCab -->
+		<!-- <CopyDir SrcDir="\SD Card\UserCabFiles" DestDir="\CabFiles" />-->
+
+		<!-- Pass control to \SD Card\SSPB\_sstransferagent.xml to install Intermec components -->
+		<!-- This will also install user CAB files copied into \CabFiles by previous CopyDir command -->
+		<!-- DO NOT REMOVE THIS SECTION - IT IS REQUIRED TO INSTALL SSPB! -->
+		<!-- <Chain Dir="\SD Card\SSPB" /> -->
+		<!-- <SetRegKey KeyName="Software\Intermec\Devmgmt\SSTransferAgent" ValueName="PostBootFileLocation" Value="\SD Card\SSPB" /> -->
+
+	</Commands>   
+
+		<Files SrcDir="\Flash File Store\UserAutoInstall">
+<!-- Copy settings files -->
+			<File SrcName="barcodetypes.xml" 
+				DestName="barcodetypes.xml" 
+				DestDir="\SmartSystems\SSConfigDir"  
+			/>
+			<File SrcName="WiFiRadioOFF.xml" 
+				DestName="WiFiRadioOFF.xml" 
+				DestDir="\SmartSystems\SSConfigDir"  
+			/>
+			<File SrcName="WWAN_OFF.xml" 
+				DestName="WWAN_OFF.xml" 
+				DestDir="\SmartSystems\SSConfigDir"  
+			/>			
+		</Files>
+<!-- Install app by copying files to Programs dir -->
+			<File SrcName="CUsbKeysCS.dll" 
+				DestName="CUsbKeysCS.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="KeyTools.dll" 
+				DestName="KeyTools.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="SigCapDP2.exe" 
+				DestName="SigCapDP2.exe" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="DPAG_TestApp.exe" 
+				DestName="DPAG_TestApp.exe" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Hasci.TestApp.exe" 
+				DestName="Hasci.TestApp.exe" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			
+			<!--
+			<File SrcName="itcRebootDevice.exe" 
+				DestName="itcRebootDevice.exe" 
+				DestDir="\Windows" 
+			/>
+			-->
+			
+			<File SrcName="Hasci.TestApp.DeviceControlContracts.dll" 
+				DestName="Hasci.TestApp.DeviceControlContracts.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Hasci.TestApp.IntermecBarcodeScanControls.dll" 
+				DestName="Hasci.TestApp.IntermecBarcodeScanControls.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Hasci.TestApp.IntermecImagerControls2.dll" 
+				DestName="Hasci.TestApp.IntermecImagerControls2.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<!-- this one will support only ENTER
+			<File SrcName="Hasci.TestApp.IntermecPhotoControls.dll" 
+				DestName="Hasci.TestApp.IntermecPhotoControls.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			-->
+			<File SrcName="Hasci.TestApp.IntermecPhotoControls2.dll" 
+				DestName="Hasci.TestApp.IntermecPhotoControls2.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			-->
+			<File SrcName="Hasci.TestApp.IntermecSignatureControls.dll" 
+				DestName="Hasci.TestApp.IntermecSignatureControls.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Hasci.TestApp.IntermecUtilityControls.dll" 
+				DestName="Hasci.TestApp.IntermecUtilityControls.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Intermec.DataCollection.CF3.5.dll" 
+				DestName="Intermec.DataCollection.CF3.5.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Intermec.Device.CF3.5.dll" 
+				DestName="Intermec.Device.CF3.5.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll" 
+				DestName="Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Intermec.Multimedia.Camera.CF35.dll" 
+				DestName="Intermec.Multimedia.Camera.CF35.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Intermec.Windows.Forms.InkCapture.CF35.dll" 
+				DestName="Intermec.Windows.Forms.InkCapture.CF35.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="IntermecTestApp.exe" 
+				DestName="IntermecTestApp.exe" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="ITCImager.dll" 
+				DestName="ITCImager.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="ITCINK.dll" 
+				DestName="ITCINK.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="ITCScan.dll" 
+				DestName="ITCScan.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="ITCSSApi.dll" 
+				DestName="ITCSSApi.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="OpenNETCF.dll" 
+				DestName="OpenNETCF.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="OpenNETCF.Drawing.dll" 
+				DestName="OpenNETCF.Drawing.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Pocket.ComponentModel.Initialization.dll" 
+				DestName="Pocket.ComponentModel.Initialization.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+			<File SrcName="Pocket.System.ComponentModel.Composition.dll" 
+				DestName="Pocket.System.ComponentModel.Composition.dll" 
+				DestDir="\Program Files\HasciTestApp" 
+			/>
+<!-- Copy LNK files -->
+			<File SrcName="Hasci.TestApp.lnk" 
+				DestName="Hasci.TestApp.lnk" 
+				DestDir="\Windows\Start Menu\Programs" 
+			/>
+			<!-- do not copy additional lnk files -->
+		<!--
+			<File SrcName="SigCapDP2.lnk" 
+				DestName="SigCapDP2.lnk" 
+				DestDir="\Windows\Start Menu\Programs" 
+			/>
+			<File SrcName="DPAG_TestApp.lnk" 
+				DestName="DPAG_TestApp.lnk" 
+				DestDir="\Windows\Start Menu\Programs" 
+			/>
+			<File SrcName="IntermecTestApp.lnk" 
+				DestName="IntermecTestApp.lnk" 
+				DestDir="\Windows\Start Menu\Programs" 
+			/>
+		-->
+			
+<!-- AutoStart App -->
+			<File SrcName="Hasci.TestApp.lnk" 
+				DestName="Hasci.TestApp.lnk" 
+				DestDir="\Windows\StartUp" 
+			/>
+
+<!-- Cabfiles copy/install -->
+
+		<Files SrcDir="\Flash File Store\Cab">
+
+		<!-- installing IDL.cab.pkg will require user input and does a reboot all the time
+		   this interrupts the processing of this _sstransferagent.xml all the time
+		   better move contents of idl.cab.pkg to a normal cab or use the files inside to install<- did not work OK
+		   v1.6: idl.cab.pkg will be copied but NOT installed automatically
+		   -->
+	   <File SrcName="IDL.cab.pkg" DestName="IDL.cab.pkg" DestDir="\Temp" />
+	   
+	   <!-- the following file has the files and changes of IDL.cab.pkg -->
+<!-- DOES NOT WORK!			<File SrcName="IDL_HGO.cab" DestName="IDL_HGO.cab" DestDir="\Cabfiles" /> -->
+			
+	   <!-- the following file is not needed if idl.cab.pkg is not used any more 
+	   v1.6 YOU HAVE TO INSTALL idl.cab.pkg one time after a cleanboot -->
+       <!--	<File SrcName="" DestName="updatebin.exe" DestDir="\Windows" Run="true"  WAIT="true" CmdLine="\Temp\IDL.cab.pkg" /> -->
+
+			<File SrcName="02_CNxDShow_CIL1.98.CAB" DestName="02_CNxDShow_CIL1.98.CAB" DestDir="\Cabfiles" />
+			<File SrcName="03_KBDTools.CAB" DestName="03_KBDTools.CAB" DestDir="\Cabfiles" />
+			<File SrcName="05_itc50.dll_Field_Trial.cab" DestName="05_itc50.dll_Field_Trial.cab" DestDir="\Cabfiles" />
+			<File SrcName="ITC_KeybdClick.cab" DestName="ITC_KeybdClick.cab" DestDir="\Cabfiles" />
+			
+<!-- Start install of cabfiles. Do NOT check for reset, the warmboot will be done by ssclient! -->
+			<File SrcName="" DestName="autocab.exe" DestDir="\2577" Run="true"  WAIT="true" CmdLine="-FILE=\CabFiles /noui -SHOW=2 -CHKRST=0" />
+		</Files>
+
+		<Files SrcDir="\Flash File Store\UserAutoInstall">
+<!-- Keyboard remapping , see log at root -->
+<!--			<File SrcName="" DestName="KeyMapImport.exe" DestDir="\Flash File Store\UserAutoInstall" Run="true"  WAIT="true" CmdLine="\Flash File Store\UserAutoInstall\Cx70_keymaps.xml" /> -->
+			<File SrcName="" DestName="KeyMapImport.exe" DestDir="\Flash File Store\UserAutoInstall" Run="true"  WAIT="true" CmdLine="\Flash File Store\UserAutoInstall\ck70_largeAlpha.xml" />
+			<File SrcName="" DestName="KeyMapImport.exe" DestDir="\Flash File Store\UserAutoInstall" Run="true"  WAIT="true" CmdLine="\Flash File Store\UserAutoInstall\ck70_num.xml" />
+			<File SrcName="" DestName="KeyMapImport.exe" DestDir="\Flash File Store\UserAutoInstall" Run="true"  WAIT="true" CmdLine="\Flash File Store\UserAutoInstall\cn70_alpha.xml" />
+			<File SrcName="" DestName="KeyMapImport.exe" DestDir="\Flash File Store\UserAutoInstall" Run="true"  WAIT="true" CmdLine="\Flash File Store\UserAutoInstall\cn70_num.xml" />
+			<File SrcName="" DestName="KeyMapImport.exe" DestDir="\Flash File Store\UserAutoInstall" Run="true"  WAIT="true" CmdLine="\Flash File Store\UserAutoInstall\cn70e_alpha.xml" />
+			<File SrcName="" DestName="KeyMapImport.exe" DestDir="\Flash File Store\UserAutoInstall" Run="true"  WAIT="true" CmdLine="\Flash File Store\UserAutoInstall\cn70e_num.xml" />
+		</Files>
+
+<!-- REBOOT 
+			<File SrcName="" DestName="itcRebootDevice.exe" DestDir="\Flash File Store\UserAutoInstall" Run="true"  WAIT="true" CmdLine="" />
+-->        
+<!-- BootSettings exmaple copy
+	<Files  SrcDir="\Flash File Store\UserAutoInstall"> 
+      <File SrcName="BootSettings.xml" DestName="BootSettings.xml“ DestDir="\SmartSystems" /> 
+    </Files> 
+--> 
+
+    </Device>
+
+</Devices>
