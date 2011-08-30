@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<AutoConfig>
+  <Files>
+<!--
+	version 1.0
+		# install idl
+	purpose
+		download all files to \Flash File Store\Cab and \Flash File Store\UserAutoInstall
+		finally do a reboot and let ssclient start the install
+-->
+<!-- INSTALLERS -->
+			<!-- replaced idl.cab.pkg with idl_hgo.cab -->
+			<!-- v1.6: added idl.cab.pkg again but without AutoInstall! -->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/IDL.cab.pkg" 
+                Dest="\Flash File Store\Cab\IDL.cab.pkg" 
+                FileId="3.01"
+                Run="\windows\updatebin.exe" 
+                WAIT="false" 
+                CmdLine="\Flash File Store\Cab\IDL.cab.pkg" 
+            />
+  </Files>
+</AutoConfig>           
