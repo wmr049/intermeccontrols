@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define TESTMODE
+//scan some barcodes in a given sequence as fast as possible
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,6 +36,16 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
     [Export(typeof(Hasci.TestApp.DeviceControlContracts.IBarcodeScanControl))]
     public partial class IntermecBarcodescanControl2 : UserControl, Hasci.TestApp.DeviceControlContracts.IBarcodeScanControl
     {
+#if TESTMODE
+        string[] testcodes = { "0123456789", "CODE-39", "9781860742712", "CODE-39", "05012345678900", "CODE-39", "0123456789", "CODE-39" };
+        int testCodeCount = 8;
+        int testCodePos = 0;
+        int testBarcodeReadCount=0;
+        /// <summary>
+        /// number of codes read in correct sequence
+        /// </summary>
+        int testGoodReadCount=0;
+#endif
         /// <summary>
         /// the barcode reader object
         /// </summary>
@@ -46,6 +58,10 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
         /// internal var to hold current barcode data
         /// </summary>
         private string _BarcodeText = "Barcode nicht anzeigbar";
+        /// <summary>
+        /// sync access to _BarcodeText using a lock object
+        /// </summary>
+        private object lockBarcodeData = new object();
         /// <summary>
         /// internal var to hold good/bad scan
         /// </summary>
@@ -124,6 +140,12 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
                 addLog("IntermecBarcodescanControl2: BarcodeReader init FAILED");
                 throw new System.IO.FileNotFoundException("Intermec.Datacollection.dll or ITCScan.DLL missing");
             }
+#if TESTMODE
+            //testcodes = new string[8];
+            testCodeCount = testcodes.Length;
+            testCodePos = 0;
+#endif
+
         }
 
 
@@ -205,7 +227,9 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
         void bcr_BarcodeReadCanceled(object sender, BarcodeReadCancelEventArgs bce)
         {
             addLog("bcr_BarcodeReadCanceled...");
-            _BarcodeText = _sErrorText;
+            lock (lockBarcodeData){
+                _BarcodeText = _sErrorText;
+            }
             _IsSuccess = false;
             ScanIsReady();
             addLog("bcr_BarcodeReadCanceled: disable scanner");
@@ -226,9 +250,34 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
             //if (barcodeID.is2Dcode(iSym))
             //    _BarcodeText = "2D Code gescannt";
             //else
+            lock (lockBarcodeData)
+            {
                 _BarcodeText = Encoding.UTF8.GetString(bre.DataBuffer, 0, bre.BytesInBuffer);
-            changeText( _BarcodeText);
+                changeText( _BarcodeText);
+            }
+#if TESTMODE
+            if (testcodes[testCodePos] == _BarcodeText)
+            {
+                addLog("testcode '" + testcodes[testCodePos] + "' match found");
+                testGoodReadCount++;
+                _IsSuccess = true;
+            }
+            else
+            {
+                addLog("barcode does not match: current='" + testcodes[testCodePos] + "' scanned='" + _BarcodeText + "'");
+                _IsSuccess = false;
+            }
+
+            testBarcodeReadCount++;
+            addLog("testBarcodeReadCount=" + testBarcodeReadCount.ToString());
+            addLog("testGoodReadCount=" + testGoodReadCount.ToString());
+            testCodePos++;
+            if(testCodePos>=testCodeCount)
+                testCodePos=0;
+            addLog("testCodePos=" + testCodePos.ToString());
+#else
             _IsSuccess = true;
+#endif
 
             addLog("bcr_BarcodeRead calling ScanIsReady()");
             ScanIsReady();
@@ -275,7 +324,10 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
             }
             addLog("readBarcodeThread setting up vars...");
             _bReadingBarcode = true;
-            _BarcodeText = "";
+            lock (lockBarcodeData)
+            {
+                _BarcodeText = "";
+            }
             _IsSuccess = false;
             try
             {
@@ -345,7 +397,12 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
         /// </summary>
         public string BarcodeText
         {
-            get { return _BarcodeText; }
+            get {
+                lock (lockBarcodeData)
+                {
+                    return _BarcodeText;
+                }
+            }
         }
         /// <summary>
         /// return a bool for a good/bad scan
