@@ -1,0 +1,344 @@
+<?xml version="1.0" ?>
+<AutoConfig>
+  <Files>
+<!--
+	version 3.00:
+		+ added KeyTools.DLL
+	version 2.60:
+		+ re-added reboot at end
+	version 2.51:
+		+ removed reboot at bottom, the reboot will started by idl.cab.pkg install
+	version 2.50:
+		+ changed ITCReboot from Wiat=true to false
+	version 2.50:
+		+ added ITC_KeybdClick.cab
+	version 2.42:
+		+ added missing closing quotes in keymap inport Dest= lines
+	version 2.41:
+		+ added SRs FILENAME in Dest
+	version 2.4:
+		+ added separate keymap xmls as API does not work with combined file
+	version 2.3
+		+ added SR11071900_MSC_Cx70WM65_ALL.CAB
+	version 2.2
+	    + replaced Hasci.TestApp.IntermecPhotoControls.dll by Hasci.TestApp.IntermecPhotoControls2.dll
+	version 1.9
+		+ removed Run from KeyMapImport as it would need an installed 03_KBDTools.CAB
+		+ changed wrong target name of 02_CNxDShow_CIL1.98.CAB copy!
+	version 1.8
+		+ renamed autoconfig.xml to hasci_dpag.xml
+		+ moved config xml to top of file
+		+ replaced 02_CNxDShow.cab by 02_CNxDShow_CIL1.98.CAB
+	version 1.7
+		+ removed nested xml comments
+	version 1.6
+		+ re-added idl.cab.pkg
+		+ removed IDL_HGO.pkg
+	version 1.4
+		+ removed (commented) run lines from cab file copies
+		+ replaced idl.cab.pkg with IDL_HGO.cab
+		+ replaced CNxDshow.cab with new one from Ron VanDerPutten (eMail 1. aug 2011)
+	purpose
+		download all files to \Flash File Store\Cab and \Flash File Store\UserAutoInstall
+		finally do a reboot and let ssclient start the install
+-->
+<!-- ServiceRelease -->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/SR11071900_MSC_Cx70WM65_ALL.CAB" 
+                Dest="\Flash File Store\SSPB\SRs\SR11071900_MSC_Cx70WM65_ALL.CAB"
+                FileId="3.00"
+            />
+<!-- CONFIG -->            
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/barcodetypes.xml" 
+                Dest="\Flash File Store\UserAutoInstall\barcodetypes.xml"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/WiFiRadioOFF.xml" 
+                Dest="\Flash File Store\UserAutoInstall\WiFiRadioOFF.xml"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/WWAN_OFF.xml" 
+                Dest="\Flash File Store\UserAutoInstall\WWAN_OFF.xml"
+                FileId="3.00"
+            />
+<!-- apply config -->
+            <File 
+                Src="\Flash File Store\UserAutoInstall\barcodetypes.xml" 
+                Dest="\Flash File Store\UserAutoInstall\barcodetypes.xml"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/WiFiRadioOFF.xml" 
+                Dest="\Flash File Store\UserAutoInstall\WiFiRadioOFF.xml"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/WWAN_OFF.xml" 
+                Dest="\Flash File Store\UserAutoInstall\WWAN_OFF.xml"
+                FileId="3.00"
+            />
+<!-- keyboard remapping files -->
+<!--            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Cx70_keymaps.xml" 
+                Dest="\Flash File Store\UserAutoInstall\Cx70_keymaps.xml"
+                FileId="3.00"
+            />
+-->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/ck70_largeAlpha.xml"
+                Dest="\Flash File Store\UserAutoInstall\ck70_largeAlpha.xml"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/ck70_num.xml"
+                Dest="\Flash File Store\UserAutoInstall\ck70_num.xml"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/cn70_alpha.xml"
+                Dest="\Flash File Store\UserAutoInstall\cn70_alpha.xml"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/cn70_num.xml"
+                Dest="\Flash File Store\UserAutoInstall\cn70_num.xml"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/cn70e_alpha.xml"
+                Dest="\Flash File Store\UserAutoInstall\cn70e_alpha.xml"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/cn70e_num.xml"		
+                Dest="\Flash File Store\UserAutoInstall\cn70e_num.xml"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/KeyMapImport.exe" 
+                Dest="\Flash File Store\UserAutoInstall\KeyMapImport.exe"
+                FileId="3.00"
+            />
+<!-- APP -->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.exe" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.exe"
+                FileId="3.00"
+            />
+
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/IntermecTestApp.exe" 
+                Dest="\Flash File Store\UserAutoInstall\IntermecTestApp.exe"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/DPAG_TestApp.exe" 
+                Dest="\Flash File Store\UserAutoInstall\DPAG_TestApp.exe"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/SigCapDP2.exe" 
+                Dest="\Flash File Store\UserAutoInstall\SigCapDP2.exe"
+                FileId="3.00"
+            />
+<!-- LINKS -->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/DPAG_TestApp.lnk" 
+                Dest="\Flash File Store\UserAutoInstall\DPAG_TestApp.lnk"
+                FileId="3.00"
+            />
+
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.lnk" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.lnk"
+                FileId="3.00"
+            />
+
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/IntermecTestApp.lnk" 
+                Dest="\Flash File Store\UserAutoInstall\IntermecTestApp.lnk"
+                FileId="3.00"
+            />
+
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/SigCapDP2.lnk" 
+                Dest="\Flash File Store\UserAutoInstall\SigCapDP2.lnk"
+                FileId="3.00"
+            />
+
+<!-- RUNTIMES -->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Pocket.ComponentModel.Initialization.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Pocket.ComponentModel.Initialization.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/CUsbKeysCS.dll" 
+                Dest="\Flash File Store\UserAutoInstall\CUsbKeysCS.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/KeyTools.dll" 
+                Dest="\Flash File Store\UserAutoInstall\KeyTools.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.DeviceControlContracts.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.DeviceControlContracts.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.IntermecBarcodeScanControls.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.IntermecBarcodeScanControls.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.IntermecImagerControls2.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.IntermecImagerControls2.dll"
+                FileId="3.00"
+            />
+			<!-- replaced by Hasci.TestApp.IntermecPhotoControls2.dll
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.IntermecPhotoControls.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.IntermecPhotoControls.dll"
+                FileId="3.00"
+            />
+			-->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.IntermecPhotoControls2.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.IntermecPhotoControls2.dll"
+                FileId="3.00"
+            />
+			
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.IntermecSignatureControls.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.IntermecSignatureControls.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.IntermecUtilityControls.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.IntermecUtilityControls.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Intermec.DataCollection.CF3.5.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Intermec.DataCollection.CF3.5.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Intermec.Device.CF3.5.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Intermec.Device.CF3.5.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Intermec.Multimedia.Camera.CF35.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Intermec.Multimedia.Camera.CF35.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Intermec.Windows.Forms.InkCapture.CF35.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Intermec.Windows.Forms.InkCapture.CF35.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/ITCImager.dll" 
+                Dest="\Flash File Store\UserAutoInstall\ITCImager.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/ITCINK.dll" 
+                Dest="\Flash File Store\UserAutoInstall\ITCINK.dll"
+                FileId="3.00"
+            />
+<!--                
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/ITCScan.dll" 
+                Dest="\Flash File Store\UserAutoInstall\ITCScan.dll"
+                FileId="3.00"
+            />
+-->            
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/ITCSSApi.dll" 
+                Dest="\Flash File Store\UserAutoInstall\ITCSSApi.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/OpenNETCF.dll" 
+                Dest="\Flash File Store\UserAutoInstall\OpenNETCF.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/OpenNETCF.Drawing.dll" 
+                Dest="\Flash File Store\UserAutoInstall\OpenNETCF.Drawing.dll"
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Pocket.System.ComponentModel.Composition.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Pocket.System.ComponentModel.Composition.dll"
+                FileId="3.00"
+            />
+
+<!-- INSTALLERS -->
+			<!-- replaced idl.cab.pkg with idl_hgo.cab -->
+			<!-- v1.6: added idl.cab.pkg again but without AutoInstall! -->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/IDL.cab.pkg" 
+                Dest="\Flash File Store\Cab\IDL.cab.pkg" 
+                FileId="3.00"
+            />
+			<!-- v1.6 IDL_HGO will break scanner access, so I removed it
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/IDL_HGO.cab" 
+                Dest="\Flash File Store\Cab\IDL_HGO.cab" 
+                FileId="3.00"
+            />
+			-->
+
+			<File 
+                Src="ftp://192.168.128.5/s2l/dpag/02_CNxDShow_CIL1.98.CAB" 
+                Dest="\Flash File Store\Cab\02_CNxDShow_CIL1.98.CAB" 
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/03_KBDTools.CAB" 
+                Dest="\Flash File Store\Cab\03_KBDTools.CAB" 
+                FileId="3.00"
+            />
+            
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/05_itc50.dll_Field_Trial.cab" 
+                Dest="\Flash File Store\Cab\05_itc50.dll_Field_Trial.cab" 
+                FileId="3.00"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/ITC_KeybdClick.cab" 
+                Dest="\Flash File Store\Cab\ITC_KeybdClick.cab" 
+                FileId="3.00"
+            />
+<!-- UserAutoInstall control file -->			
+			<File 
+                Src="ftp://192.168.128.5/s2l/dpag/_sstransferagent.xml" 
+                Dest="\Flash File Store\UserAutoInstall\_sstransferagent.xml"
+                FileId="3.00"
+            />
+<!-- REBOOT -->
+
+			<File 
+                Src="ftp://192.168.128.5/s2l/dpag/itcRebootDevice.exe" 
+                Dest="\Flash File Store\UserAutoInstall\itcRebootDevice.exe"
+                FileId="3.00"
+                Run="\Flash File Store\UserAutoInstall\itcRebootDevice.exe" 
+                WAIT="false" 
+                CmdLine="" 
+            />
+
+  </Files>
+</AutoConfig>           

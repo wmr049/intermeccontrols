@@ -1,0 +1,225 @@
+List of files, projects and scrips
+
+PC installer scripts
+
+	sync_from_S2L_to _setup.bat
+		sync files from _S2L to setup\Flash File Store directory
+	sync_idl_install.bat
+		installs IDL.cab.pkg via ActiveSync
+	sync_to_FFS.bat
+		installs _S2L files to \Flash File Store on device
+		this prepares a cleanboot persistent install
+	sync_update_orange.bat
+		[obsolete]was used to install the latest files as a patch
+
+sync support files
+
+	the sync batch files need some of the itsutils:
+	itsutils.dll
+		remote installed runtime
+	pkill.exe
+		tool to kill a process remotely
+	pmkdir.exe
+		tool to create a dir remotely
+	pput.exe
+		tool to copy files via activesync
+	preboot.exe
+		tool to reboot a device via activesync
+	prun.exe
+		tool to run a process remotely
+	
+_S2L
+
+	dir with all files needed to prepare a device for Hasci.TestApp
+	if you want to use ScanNgo, you may have to change ScanNgo xml files and update the ftp server address
+		a normal install with a running OS 1.30.00.0043 Blockpoint image running needs first hasci_idl.xml
+		and, after IDL image has been installed after reboot (Done option), you can scan the scanNgo code
+		of hasci_dpag.xml
+		a scanNgo barcode specifies the download location of the above two autoconfig files and can be
+		created from inside SmartSystems console using the scanNgo tool
+	
+	obsolete
+		NOT USED ANYMORE - FORGET
+	hasci_patch_startbutton.xml
+		ScanNgo autoconfig download xml
+	Hasci.TestApp.exe
+		The main Hasci TestApp
+	Hasci.TestApp.IntermecUtilityControls.dll
+		The intermec utility control
+	barcodetypes.xml
+		xml config for barcode types and power settings
+	hasci_dpag.xml
+		ScanNgo autoconfig download xml
+	hasci_idl.xml
+		ScanNgo autoconfig download xml
+		(for ftp install install this once and first!)
+	_sstransferagent.xml
+		AutoUserInstall sstransfer xml script
+	ITC_KeybdClick.cab
+		setup keyboard click sound
+	Hasci.TestApp.IntermecPhotoControls2.dll
+		intermec Camera control
+	Hasci.TestApp.IntermecBarcodeScanControls.dll
+		Intermec Barcode control
+	Hasci.TestApp.IntermecImagerControls2.dll
+		Intermec Imager control
+	Hasci.TestApp.IntermecSignatureControls.dll
+		Intermec onscreen signature control
+	KeyMapImport.exe
+		tool to import exported keyboard remapper files
+	ck70_largeAlpha.xml
+		keyboard remapper file CK70 LargeAlpha
+	ck70_num.xml
+		keyboard remapper file CK70 Numeric
+	cn70_alpha.xml
+		keyboard remapper file CN70 Alpha
+	cn70_num.xml
+		keyboard remapper file CN70 Numeric
+	cn70e_alpha.xml
+		keyboard remapper file CN70e Alpha
+	cn70e_num.xml
+		keyboard remapper file CN70e Numeric
+	Cx70_keymaps.xml
+		keyboard remapper file for all keybds in one file, does not work with keymap import API!
+	02_CNxDShow_CIL1.98.CAB
+		Installer cab file for .NET Camera support
+	autoconfig.xml
+		[obsolete, DO NOT USE]sample file for another install
+	Intermec.Multimedia.Camera.CF35.dll
+		intermec camera dotnet wrapper
+	ITCImager.dll
+		intermec imager library
+	Pocket.ComponentModel.Initialization.dll
+		Pocket MEF runtime needed by TestApp and the controls
+	Pocket.System.ComponentModel.Composition.dll
+		Pocket MEF runtime 2 needed by TestApp and the controls
+	SigCapDP2.lnk
+		[obsolete, DO NOT USE], was used to install a link to SigCapDP2 test app
+	WWAN_OFF.xml
+		smartsystems config xml to switch WWAN off
+	05_itc50.dll_Field_Trial.cab
+		fixed itc50.dll for Keyboard backlight control
+	autoconfig_pco.xml
+		[obsolete], had been used as template
+	CUsbKeysCS.dll
+		runtime to remap keys dynamically
+	Hasci.TestApp.lnk
+		install a link to installed Hasci.TestApp
+	Hasci.TestApp.DeviceControlContracts.dll
+		Hasic MEF control prototype runtime
+	Intermec.Device.CF3.5.dll
+		intermec device API dotnet runtime
+	Intermec.Windows.Forms.InkCapture.CF35.dll
+		intermec dotnet InkCapture (signature capture) runtime
+	IntermecTestApp.exe
+		[obsolete, DO NOT USE], was used to install IntermecTestApp test app
+	IntermecTestApp.lnk
+		[obsolete, DO NOT USE], was used to install a link to IntermecTestApp
+	ITCINK.dll
+		intermec dotnet signature wrapper
+	itcRebootDevice.exe
+		tool to reboot device
+	ITCSSApi.dll
+		Intermec SSAPI runtime
+	OpenNETCF.dll
+		OpenNetCF runtime
+	SigCapDP2.exe
+		[obsolete, DO NOT USE], was used to install SigCapDP2
+	DPAG_TestApp.exe
+		[obsolete, DO NOT USE], was used to install DPAG_TestApp
+	DPAG_TestApp.lnk
+		[obsolete, DO NOT USE], was used to install a link to DPAG_TestApp
+	OpenNETCF.Drawing.dll
+		OpenNetCFDrawing runtime
+	03_KBDTools.CAB
+		the intermec keyboard remapper applet and API
+	IDL.cab.pkg
+		the Intermec IDL update, needs to be installed separately
+	Intermec.DataCollection.CF3.5.dll
+		intermec barcode scanner dotnet library
+	Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll
+		intermec SSAPI dotnet library
+	WiFiRadioOFF.xml
+		config xml to disable WLAN radio
+	SR11071900_MSC_Cx70WM65_ALL.CAB
+		intermec service release for OS blockpoint 1.30.00.0043
+	iKill2.exe
+		tool to kill running processes
+	CleanBootCmd.exe
+		tool to issue a cleanboot
+
+Programmers files
+
+	DeviceControlInterfaces
+		source for Hasci.TestApp.DeviceControlContracts.dll the MEF contract between the app and the controls
+	HasciTestApp
+		source dir of Hasci.TestApp
+	IntermecControls
+		source tree of the IntermecControls, a PostBuild script will copy the updated files to _S2L directory!
+			Hasci.TestApp.IntermecBarcodescanControl
+			Hasci.TestApp.IntermecCamera
+				[obsolete] do NOT use,
+				IF you have two controls for the same interface, HasciTestApp will probably pick the wrong one! 
+				The Visual Studio 2008 solution file does NOT build and deploy this
+			Hasci.TestApp.IntermecCamera2
+			Hasci.TestApp.IntermecImagerControls2
+			Hasci.TestApp.IntermecSignatureControl
+			Hasci.TestApp.IntermecUtility
+	KeyMapImport
+		source tree of the remam import utility
+
+setup
+
+	Copy the dir structure to root of device and then do a cleanboot and the app and settings will be installed
+	
+	Flash File Store
+		Cab
+			02_CNxDShow_CIL1.98.CAB
+			03_KBDTools.CAB
+			05_itc50.dll_Field_Trial.cab
+			IDL.cab.pkg
+			ITC_KeybdClick.cab
+
+		SSPB
+			SRs
+				SR11071900_MSC_Cx70WM65_ALL.CAB
+
+		UserAutoInstall
+			_sstransferagent.xml
+			barcodetypes.xml
+			ck70_largeAlpha.xml
+			ck70_num.xml
+			cn70_alpha.xml
+			cn70_num.xml
+			cn70e_alpha.xml
+			cn70e_num.xml
+			CUsbKeysCS.dll
+			Cx70_keymaps.xml
+			DPAG_TestApp.exe
+			Hasci.TestApp.exe
+			Hasci.TestApp.DeviceControlContracts.dll
+			Hasci.TestApp.IntermecBarcodeScanControls.dll
+			Hasci.TestApp.IntermecImagerControls2.dll
+			Hasci.TestApp.IntermecPhotoControls2.dll
+			Hasci.TestApp.IntermecSignatureControls.dll
+			Hasci.TestApp.IntermecUtilityControls.dll
+			Intermec.DataCollection.CF3.5.dll
+			Intermec.Device.CF3.5.dll
+			Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll
+			Intermec.Multimedia.Camera.CF35.dll
+			Intermec.Windows.Forms.InkCapture.CF35.dll
+			IntermecTestApp.exe
+			ITCImager.dll
+			ITCINK.dll
+			itcRebootDevice.exe
+			ITCSSApi.dll
+			KeyMapImport.exe
+			OpenNETCF.dll
+			OpenNETCF.Drawing.dll
+			Pocket.ComponentModel.Initialization.dll
+			Pocket.System.ComponentModel.Composition.dll
+			SigCapDP2.exe
+			WiFiRadioOFF.xml
+			WWAN_OFF.xml
+
+

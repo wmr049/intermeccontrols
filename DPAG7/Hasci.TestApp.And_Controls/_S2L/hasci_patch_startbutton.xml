@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<AutoConfig>
+  <Files>
+<!--
+	purpose
+		download patch files to \Flash File Store\Cab and \Flash File Store\UserAutoInstall
+		and to Program Files and SSConfigDir
+		finally do a reboot the patched App start
+-->
+<!-- CONFIG -->            
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/barcodetypes.xml" 
+                Dest="\Flash File Store\UserAutoInstall\barcodetypes.xml"
+                FileId="3.30"
+            />
+<!-- apply config -->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/barcodetypes.xml" 
+                Dest="\Smart Systems\SSConfigDir\barcodetypes.xml"
+                FileId="3.30"
+            />
+<!-- APP -->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.exe" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.exe"
+                FileId="3.30"
+            />
+			<!--
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/iKill2.exe" 
+                Dest="\Flash File Store\UserAutoInstall\iKill2.exe"
+                FileId="3.30"
+                Run="\Flash File Store\UserAutoInstall\iKill2.exe" 
+                WAIT="true" 
+                CmdLine="Hasci.TestApp.exe" 
+            />
+			-->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.exe" 
+                Dest="\Program Files\HasciTestApp\Hasci.TestApp.exe"
+                FileId="3.30"
+            />
+
+<!-- RUNTIMES -->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.IntermecUtilityControls.dll" 
+                Dest="\Flash File Store\UserAutoInstall\Hasci.TestApp.IntermecUtilityControls.dll"
+                FileId="3.30"
+            />
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/Hasci.TestApp.IntermecUtilityControls.dll" 
+                Dest="\Program Files\HasciTestApp\Hasci.TestApp.IntermecUtilityControls.dll"
+                FileId="3.30"
+            />
+
+<!-- REBOOT -->
+
+			<File 
+                Src="ftp://192.168.128.5/s2l/dpag/itcRebootDevice.exe" 
+                Dest="\Flash File Store\UserAutoInstall\itcRebootDevice.exe"
+                FileId="3.30"
+                Run="\Flash File Store\UserAutoInstall\itcRebootDevice.exe" 
+                WAIT="false" 
+                CmdLine="" 
+            />
+
+  </Files>
+</AutoConfig>           

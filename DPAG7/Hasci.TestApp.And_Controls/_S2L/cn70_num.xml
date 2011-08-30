@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<KBDMap Keyboard="A-Numeric\0001" Date="2003/01/02 14:34:38" Absolute="0">
+ <Normal>
+  <KEY Page="7" Usage="0" Value="0"/>
+  <KEY Page="7" Usage="1" Value="0"/>
+  <KEY Page="7" Usage="2" Value="0"/>
+  <KEY Page="7" Usage="3" Value="0"/>
+  <KEY Page="7" Usage="30" Value="22"/>
+  <KEY Page="7" Usage="31" Value="30"/>
+  <KEY Page="7" Usage="32" Value="38"/>
+  <KEY Page="7" Usage="33" Value="37"/>
+  <KEY Page="7" Usage="34" Value="46"/>
+  <KEY Page="7" Usage="35" Value="54"/>
+  <KEY Page="7" Usage="36" Value="61"/>
+  <KEY Page="7" Usage="37" Value="62"/>
+  <KEY Page="7" Usage="38" Value="70"/>
+  <KEY Page="7" Usage="39" Value="69"/>
+  <KEY Page="7" Usage="40" Value="90"/>
+  <KEY Page="7" Usage="41" Value="118"/>
+  <KEY Page="7" Usage="42" Value="102"/>
+  <KEY Page="7" Usage="43" Value="13"/>
+  <KEY Page="7" Usage="45" Value="78"/>
+  <KEY Page="7" Usage="55" Value="73"/>
+  <KEY Page="7" Usage="79" Value="116" Extended="1"/>
+  <KEY Page="7" Usage="80" Value="107" Extended="1"/>
+  <KEY Page="7" Usage="81" Value="114" Extended="1"/>
+  <KEY Page="7" Usage="82" Value="117" Extended="1"/>
+  <KEY Page="7" Usage="227" Value="207" NOOP="1" AppLaunch="1"/>
+  <KEY Page="7" Usage="60" Value="4" NOOP="1"/>
+  <KEY Page="7" Usage="61" Value="12" NOOP="1"/>
+  <KEY Page="7" Usage="63" Value="11" NoRepeat="1" NOOP="1"/>
+  <KEY Page="7" Usage="64" Value="131" NoRepeat="1" NOOP="1"/>
+  <KEY Page="7" Usage="65" Value="62" Shifted="1"/>
+  <KEY Page="7" Usage="66" Value="38" Shifted="1"/>
+  <KEY Page="7" Usage="67" Value="193" NoRepeat="1" NOOP="1" VKEY="1" AppLaunch="1"/>
+  <KEY Page="7" Usage="145" Value="1" NoRepeat="1" NOOP="1" NamedEvent="1"/>
+  <KEY Page="7" Usage="144" Value="1" NoRepeat="1" NamedEvent="1"/>
+  <KEY Page="12" Usage="233" Value="1" NoRepeat="1" PlaneShift="1"/>
+  <KEY Page="7" Usage="139" Value="2" NoRepeat="1" PlaneShift="1"/>
+ </Normal>
+ <Orange>
+  <KEY Page="7" Usage="0" Value="0"/>
+  <KEY Page="7" Usage="1" Value="0"/>
+  <KEY Page="7" Usage="2" Value="0"/>
+  <KEY Page="7" Usage="3" Value="0"/>
+  <KEY Page="7" Usage="4" Value="74" Shifted="1"/>
+  <KEY Page="7" Usage="5" Value="61"/>
+  <KEY Page="7" Usage="6" Value="10"/>
+  <KEY Page="7" Usage="7" Value="76" Shifted="1"/>
+  <KEY Page="7" Usage="8" Value="37" Shifted="1"/>
+  <KEY Page="7" Usage="9" Value="74"/>
+  <KEY Page="7" Usage="10" Value="78"/>
+  <KEY Page="7" Usage="11" Value="37"/>
+  <KEY Page="7" Usage="12" Value="38"/>
+  <KEY Page="7" Usage="13" Value="46"/>
+  <KEY Page="7" Usage="14" Value="54"/>
+  <KEY Page="7" Usage="15" Value="85"/>
+  <KEY Page="7" Usage="16" Value="70"/>
+  <KEY Page="7" Usage="17" Value="62"/>
+  <KEY Page="7" Usage="18" Value="22" Shifted="1"/>
+  <KEY Page="7" Usage="19" Value="2" NoRepeat="1" MultiKey="1"/>
+  <KEY Page="7" Usage="20" Value="30" Shifted="1"/>
+  <KEY Page="7" Usage="21" Value="46" Shifted="1"/>
+  <KEY Page="7" Usage="22" Value="61" Shifted="1"/>
+  <KEY Page="7" Usage="23" Value="85" Shifted="1"/>
+  <KEY Page="7" Usage="24" Value="30"/>
+  <KEY Page="7" Usage="25" Value="1"/>
+  <KEY Page="7" Usage="26" Value="82"/>
+  <KEY Page="7" Usage="27" Value="34"/>
+  <KEY Page="7" Usage="28" Value="22"/>
+  <KEY Page="7" Usage="29" Value="26"/>
+  <KEY Page="7" Usage="30" Value="22"/>
+  <KEY Page="7" Usage="31" Value="30"/>
+  <KEY Page="7" Usage="32" Value="38"/>
+  <KEY Page="7" Usage="33" Value="37"/>
+  <KEY Page="7" Usage="34" Value="46"/>
+  <KEY Page="7" Usage="35" Value="54"/>
+  <KEY Page="7" Usage="36" Value="61"/>
+  <KEY Page="7" Usage="37" Value="62"/>
+  <KEY Page="7" Usage="38" Value="70"/>
+  <KEY Page="7" Usage="39" Value="69"/>
+  <KEY Page="7" Usage="40" Value="90"/>
+  <KEY Page="7" Usage="41" Value="2" NoRepeat="1" MultiKey="1"/>
+  <KEY Page="7" Usage="42" Value="102"/>
+  <KEY Page="7" Usage="43" Value="3" MultiKey="1"/>
+  <KEY Page="7" Usage="44" Value="120"/>
+  <KEY Page="7" Usage="45" Value="85" Shifted="1"/>
+  <KEY Page="7" Usage="55" Value="73"/>
+  <KEY Page="7" Usage="79" Value="116" Extended="1"/>
+  <KEY Page="7" Usage="80" Value="107" Extended="1"/>
+  <KEY Page="7" Usage="81" Value="114" Extended="1"/>
+  <KEY Page="7" Usage="82" Value="117" Extended="1"/>
+  <KEY Page="7" Usage="224" Value="69"/>
+  <KEY Page="7" Usage="225" Value="4" Modifier="1"/>
+  <KEY Page="7" Usage="227" Value="207" NOOP="1" AppLaunch="1"/>
+  <KEY Page="7" Usage="60" Value="5" NOOP="1"/>
+  <KEY Page="7" Usage="61" Value="6" NOOP="1"/>
+  <KEY Page="7" Usage="77" Value="12"/>
+  <KEY Page="7" Usage="62" Value="0" NoRepeat="1" VKEY="1" AppLaunch="1"/>
+  <KEY Page="7" Usage="63" Value="11" NoRepeat="1" NOOP="1"/>
+  <KEY Page="7" Usage="64" Value="131" NoRepeat="1" NOOP="1"/>
+  <KEY Page="7" Usage="65" Value="62" Shifted="1"/>
+  <KEY Page="7" Usage="66" Value="38" Shifted="1"/>
+  <KEY Page="7" Usage="67" Value="193" NoRepeat="1" NOOP="1" VKEY="1" AppLaunch="1"/>
+  <KEY Page="7" Usage="145" Value="1" NoRepeat="1" NOOP="1" NamedEvent="1"/>
+  <KEY Page="7" Usage="69" Value="0"/>
+  <KEY Page="7" Usage="144" Value="1" NoRepeat="1" NamedEvent="1"/>
+  <KEY Page="12" Usage="233" Value="1" NoRepeat="1" PlaneShift="1"/>
+  <KEY Page="7" Usage="139" Value="2" NoRepeat="1" PlaneShift="1"/>
+ </Orange>
+ <Green>
+  <KEY Page="7" Usage="0" Value="0"/>
+  <KEY Page="7" Usage="1" Value="0"/>
+  <KEY Page="7" Usage="2" Value="0"/>
+  <KEY Page="7" Usage="3" Value="0"/>
+  <KEY Page="7" Usage="30" Value="4" Modifier="1"/>
+  <KEY Page="7" Usage="31" Value="1" NoRepeat="1" Rotate="1"/>
+  <KEY Page="7" Usage="32" Value="2" NoRepeat="1" Rotate="1"/>
+  <KEY Page="7" Usage="33" Value="3" NoRepeat="1" Rotate="1"/>
+  <KEY Page="7" Usage="34" Value="4" NoRepeat="1" Rotate="1"/>
+  <KEY Page="7" Usage="35" Value="5" NoRepeat="1" Rotate="1"/>
+  <KEY Page="7" Usage="36" Value="6" NoRepeat="1" Rotate="1"/>
+  <KEY Page="7" Usage="37" Value="7" NoRepeat="1" Rotate="1"/>
+  <KEY Page="7" Usage="38" Value="8" NoRepeat="1" Rotate="1"/>
+  <KEY Page="7" Usage="39" Value="41"/>
+  <KEY Page="7" Usage="40" Value="90"/>
+  <KEY Page="7" Usage="41" Value="118"/>
+  <KEY Page="7" Usage="42" Value="102"/>
+  <KEY Page="7" Usage="43" Value="13"/>
+  <KEY Page="7" Usage="44" Value="41"/>
+  <KEY Page="7" Usage="45" Value="78"/>
+  <KEY Page="7" Usage="55" Value="73"/>
+  <KEY Page="7" Usage="79" Value="116" Extended="1"/>
+  <KEY Page="7" Usage="80" Value="107" Extended="1"/>
+  <KEY Page="7" Usage="81" Value="114" Extended="1"/>
+  <KEY Page="7" Usage="82" Value="117" Extended="1"/>
+  <KEY Page="7" Usage="224" Value="65"/>
+  <KEY Page="7" Usage="225" Value="4" Modifier="1"/>
+  <KEY Page="7" Usage="227" Value="207" NOOP="1" AppLaunch="1"/>
+  <KEY Page="7" Usage="60" Value="4" NOOP="1"/>
+  <KEY Page="7" Usage="61" Value="12" NOOP="1"/>
+  <KEY Page="7" Usage="77" Value="12"/>
+  <KEY Page="7" Usage="62" Value="0" NoRepeat="1" VKEY="1" AppLaunch="1"/>
+  <KEY Page="7" Usage="63" Value="11" NoRepeat="1" NOOP="1"/>
+  <KEY Page="7" Usage="64" Value="131" NoRepeat="1" NOOP="1"/>
+  <KEY Page="7" Usage="65" Value="62" Shifted="1"/>
+  <KEY Page="7" Usage="66" Value="38" Shifted="1"/>
+  <KEY Page="7" Usage="67" Value="193" NoRepeat="1" NOOP="1" VKEY="1" AppLaunch="1"/>
+  <KEY Page="7" Usage="145" Value="1" NoRepeat="1" NOOP="1" NamedEvent="1"/>
+  <KEY Page="7" Usage="69" Value="0"/>
+  <KEY Page="7" Usage="144" Value="1" NoRepeat="1" NamedEvent="1"/>
+  <KEY Page="12" Usage="233" Value="1" NoRepeat="1" PlaneShift="1"/>
+  <KEY Page="7" Usage="139" Value="2" NoRepeat="1" PlaneShift="1"/>
+ </Green>
+</KBDMap>
