@@ -45,10 +45,6 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hasci.TestApp.DeviceControlContracts, Version=1.0.4210.16294, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Extensions\Hasci.TestApp.DeviceControlContracts.dll</HintPath>
-    </Reference>
     <Reference Include="Intermec.DeviceManagement.SmartSystem.ITCSSApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acd169b56b6148ba">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Extensions\Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll</HintPath>
@@ -87,6 +83,12 @@
       <DependentUpon>IntermecSignatureControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DeviceControlInterfaces\Hasci.DeviceControlContracts.csproj">
+      <Project>{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}</Project>
+      <Name>Hasci.DeviceControlContracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
   <ProjectExtensions>

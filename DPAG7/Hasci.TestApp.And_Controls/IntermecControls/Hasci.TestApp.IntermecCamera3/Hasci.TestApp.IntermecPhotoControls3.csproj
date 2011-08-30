@@ -45,9 +45,6 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hasci.TestApp.DeviceControlContracts, Version=1.0.4230.26240, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="Intermec.DeviceManagement.SmartSystem.ITCSSApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acd169b56b6148ba">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Extensions\Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll</HintPath>
@@ -101,6 +98,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DeviceControlInterfaces\Hasci.DeviceControlContracts.csproj">
+      <Project>{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}</Project>
+      <Name>Hasci.DeviceControlContracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\KeyTools\KeyTools.csproj">
       <Project>{7FFEBA0C-3BFE-404D-8DA8-1C7FBB137C6F}</Project>
       <Name>KeyTools</Name>

@@ -1,6 +1,6 @@
-﻿namespace Hasci.TestApp.IntermecBarcodeScanControls2
+﻿namespace Hasci.TestApp.IntermecBarcodeScanControls3
 {
-    partial class IntermecBarcodescanControl2
+    partial class IntermecBarcodescanControl3
     {
         /// <summary>
         /// Required designer variable.
