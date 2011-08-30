@@ -17,6 +17,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyTools", "KeyTools\KeyToo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecPhotoControls3", "IntermecControls\Hasci.TestApp.IntermecCamera3\Hasci.TestApp.IntermecPhotoControls3.csproj", "{66EC468E-FB87-4DFC-B6A6-29695BA3F43B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecBarcodeScanControls2", "IntermecControls\Hasci.TestApp.IntermecBarcodescanControl2\Hasci.TestApp.IntermecBarcodeScanControls2.csproj", "{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7FFEBA0C-3BFE-404D-8DA8-1C7FBB137C6F} = {7FFEBA0C-3BFE-404D-8DA8-1C7FBB137C6F}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -28,11 +33,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6B4DFD5D-4DD6-4C42-BF67-0F9DD3C71EA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B4DFD5D-4DD6-4C42-BF67-0F9DD3C71EA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B4DFD5D-4DD6-4C42-BF67-0F9DD3C71EA4}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{6B4DFD5D-4DD6-4C42-BF67-0F9DD3C71EA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B4DFD5D-4DD6-4C42-BF67-0F9DD3C71EA4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B4DFD5D-4DD6-4C42-BF67-0F9DD3C71EA4}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{0B974C9C-8B7D-4DA9-BA05-3C3208858475}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B974C9C-8B7D-4DA9-BA05-3C3208858475}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B974C9C-8B7D-4DA9-BA05-3C3208858475}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -71,6 +72,12 @@ Global
 		{66EC468E-FB87-4DFC-B6A6-29695BA3F43B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66EC468E-FB87-4DFC-B6A6-29695BA3F43B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{66EC468E-FB87-4DFC-B6A6-29695BA3F43B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
