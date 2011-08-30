@@ -38,11 +38,13 @@ namespace Hasci.TestApp
                 ctrUtil.Visible = false;
             }
 
-            conScan.ScanReady += ScanControl_Ready;
+            //conScan.ScanReady += ScanControl_Ready;
+            conScan.ScanReady += new BarcodeEventHandler(conScan_ScanReady);    //using new eventargs driven interface
             base.menuItemSave.Text = string.Empty;
 
         }
-        private static bool bFirstLoad = true;
+
+       private static bool bFirstLoad = true;
         private void initBarcode()
         {
             Control ctrScan = conScan as Control;
@@ -63,6 +65,25 @@ namespace Hasci.TestApp
             }
         }
 
+        void conScan_ScanReady(object sender, BarcodeEventArgs e)
+        {
+            textBoxScanResult.Text = e.Text;
+            if (e._bSuccess)
+            {
+                if (checkBoxVibro.Checked)
+                    conUt.Vibration(200);
+                conUt.GoodSound(200);
+                pictureBoxOK.Visible = true;
+                pictureBoxNotOk.Visible = false;
+            }
+            else
+            {
+                conUt.BadSound(200);
+                pictureBoxOK.Visible = false;
+                pictureBoxNotOk.Visible = true;
+            }
+        }
+        
         private void ScanControl_Ready(object sender, EventArgs e)
         {
             textBoxScanResult.Text = conScan.BarcodeText;

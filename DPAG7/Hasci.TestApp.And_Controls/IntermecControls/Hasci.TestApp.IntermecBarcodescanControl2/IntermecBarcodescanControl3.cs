@@ -1,4 +1,4 @@
-﻿#define TESTMODE
+﻿//#define TESTMODE
 //scan some barcodes in a given sequence as fast as possible
 using System;
 using System.Linq;
@@ -15,7 +15,7 @@ using Intermec.DataCollection;
 using System.Threading;
 using NativeSync;
 
-namespace Hasci.TestApp.IntermecBarcodeScanControls2
+namespace Hasci.TestApp.IntermecBarcodeScanControls3
 {
     /// <summary>
     /// This is the Intermec Barcode Reader Control for MEF
@@ -34,7 +34,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
     /// </summary>
     [PartCreationPolicy(CreationPolicy.NonShared)]
     [Export(typeof(Hasci.TestApp.DeviceControlContracts.IBarcodeScanControl))]
-    public partial class IntermecBarcodescanControl2 : UserControl, Hasci.TestApp.DeviceControlContracts.IBarcodeScanControl
+    public partial class IntermecBarcodescanControl3 : UserControl, Hasci.TestApp.DeviceControlContracts.IBarcodeScanControl
     {
 #if TESTMODE
         string[] testcodes = { "0123456789", "CODE-39", "9781860742712", "CODE-39", "05012345678900", "CODE-39", "0123456789", "CODE-39" };
@@ -83,7 +83,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
         /// </summary>
         System.Threading.Thread waitThread;
 
-        public IntermecBarcodescanControl2()
+        public IntermecBarcodescanControl3()
         {
             InitializeComponent();
             try
@@ -229,8 +229,8 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
             addLog("bcr_BarcodeReadCanceled...");
             lock (lockBarcodeData){
                 _BarcodeText = _sErrorText;
+                _IsSuccess = false;
             }
-            _IsSuccess = false;
             ScanIsReady();
             addLog("bcr_BarcodeReadCanceled: disable scanner");
             scannerOnOff(false);
@@ -276,7 +276,10 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
                 testCodePos=0;
             addLog("testCodePos=" + testCodePos.ToString());
 #else
-            _IsSuccess = true;
+            lock (lockBarcodeData)
+            {
+                _IsSuccess = true;
+            }
 #endif
 
             addLog("bcr_BarcodeRead calling ScanIsReady()");
@@ -327,8 +330,8 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
             lock (lockBarcodeData)
             {
                 _BarcodeText = "";
+                _IsSuccess = false;
             }
-            _IsSuccess = false;
             try
             {
                 addLog("readBarcodeThread: enabling BarcodeReader and ScannerOn...");
@@ -385,7 +388,12 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
                 readThread.Abort();
             }
             addLog("onDeltaScan testing _IsSuccess ...");
-            if (!_IsSuccess)
+            bool __success;
+            lock(lockBarcodeData)
+            { 
+                __success = _IsSuccess; 
+            }
+            if (!__success)
             {
                 addLog("onDeltaScan invoking CancelRead()");
                 bcr.CancelRead(true);
@@ -409,11 +417,18 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
         /// </summary>
         public bool IsSuccess
         {
-            get { return _IsSuccess; }
+            get {
+                bool __success;
+                lock(lockBarcodeData)
+                { 
+                    __success = _IsSuccess; 
+                }
+                return __success; 
+            }
         }
         //Create an event
-        public event EventHandler ScanReady;
-
+        //public event EventHandler ScanReady;
+        public event Hasci.TestApp.DeviceControlContracts.BarcodeEventHandler ScanReady;
         /// <summary>
         /// this will be called for successful and faulty scans
         /// </summary>
@@ -427,7 +442,10 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls2
         {
             if (ScanReady != null)
             {
-                ScanReady(this, e);
+                lock (lockBarcodeData)
+                {
+                    ScanReady(this, new Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs(_BarcodeText, _IsSuccess));
+                }
             }
         }
         public new void Dispose()

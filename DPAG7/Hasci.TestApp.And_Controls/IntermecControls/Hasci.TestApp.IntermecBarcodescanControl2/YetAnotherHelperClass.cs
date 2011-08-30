@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Intermec.DeviceManagement.SmartSystem;
 
-namespace Hasci.TestApp.IntermecBarcodeScanControls2
+namespace Hasci.TestApp.IntermecBarcodeScanControls3
 {
     public static class YetAnotherHelperClass
     {

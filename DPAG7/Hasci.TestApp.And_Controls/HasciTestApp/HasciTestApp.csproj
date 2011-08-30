@@ -52,10 +52,6 @@
     <NoWarn>0649 0219</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hasci.TestApp.DeviceControlContracts, Version=1.0.4230.26240, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\DLLs\Hasci.TestApp.DeviceControlContracts.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.WindowsCE.Forms" />
     <Reference Include="mscorlib" />
     <Reference Include="Pocket.ComponentModel.Initialization, Version=2009.12.10.0, Culture=neutral, PublicKeyToken=5179643cd5c8740b, processorArchitecture=MSIL">
@@ -192,6 +188,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Post.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DeviceControlInterfaces\Hasci.DeviceControlContracts.csproj">
+      <Project>{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}</Project>
+      <Name>Hasci.DeviceControlContracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
   <ProjectExtensions>
