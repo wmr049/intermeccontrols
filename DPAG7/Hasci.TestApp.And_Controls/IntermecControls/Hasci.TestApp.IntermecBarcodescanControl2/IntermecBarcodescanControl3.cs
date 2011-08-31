@@ -17,6 +17,14 @@ using NativeSync;
 
 namespace Hasci.TestApp.IntermecBarcodeScanControls3
 {
+    /*  problem 31.08.
+     *  scan long barcode on p. 12 of test doc fast and often
+     *  produce a wrong scan
+     *  scan the short code of p. 12
+     *  ERROR: scanner shows old barcode!
+     *  ERROR: press scan into the the air and may get the short barcode
+    */
+
     /// <summary>
     /// This is the Intermec Barcode Reader Control for MEF
     /// After init you can press the BarcodeScannerButton to start Barcode Scanning
@@ -155,7 +163,10 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
         /// <param name="s"></param>
         void addLog(string s)
         {
-            System.Diagnostics.Debug.WriteLine(s);
+            if (System.Diagnostics.Debugger.IsAttached)
+                System.Diagnostics.Debug.WriteLine(s);
+            //else
+            //    System.Threading.Thread.Sleep(1);
         }
         private bool _bWaitLoopRunning = false;
         /// <summary>
@@ -230,13 +241,13 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
         void bcr_BarcodeReadCanceled(object sender, BarcodeReadCancelEventArgs bce)
         {
             addLog("bcr_BarcodeReadCanceled...");
-            lock (lockBarcodeData){
-                _BarcodeText = _sErrorText;
-                _IsSuccess = false;
-            }
+            //lock (lockBarcodeData){
+            //    _BarcodeText = _sErrorText;
+            //    _IsSuccess = false;
+            //}
             //direct call!
             addLog("bcr_BarcodeRead calling ScanIsReady()");
-            ScanIsReady(_BarcodeText, false);
+            ScanIsReady(_sErrorText, false);
             //ScanIsReady(); //indirect call
 
             addLog("bcr_BarcodeReadCanceled: disable scanner");
@@ -257,15 +268,18 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
             //if (barcodeID.is2Dcode(iSym))
             //    _BarcodeText = "2D Code gescannt";
             //else
-            lock (lockBarcodeData)
-            {
-                _BarcodeText = Encoding.UTF8.GetString(bre.DataBuffer, 0, bre.BytesInBuffer);
-                changeText( _BarcodeText);
-                _IsSuccess = true;
-            }
+
+            //lock (lockBarcodeData)
+            //{
+            //    //_BarcodeText = Encoding.UTF8.GetString(bre.DataBuffer, 0, bre.BytesInBuffer);
+            //    _BarcodeText = bre.strDataBuffer;
+            //    _IsSuccess = true;
+            //}
             //direct call!
             addLog("bcr_BarcodeRead calling ScanIsReady()");
-            ScanIsReady(_BarcodeText, true);
+            ScanIsReady(bre.strDataBuffer, true);
+            //changeText( _BarcodeText);
+
             //ScanReady(this, new Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs(_BarcodeText, true));
 #if TESTMODE
             if (testcodes[testCodePos] == _BarcodeText)
@@ -311,13 +325,13 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
                 addLog("scannerOnOff called with FALSE...");
             if (bcr != null)
             {
-                bcr.ScannerOn = bOnOff;
-                bcr.ScannerEnable = bOnOff;
                 if (!bOnOff)
                 {                    
                     if(_bReadingBarcode)
                         bcr.CancelRead(true);
                 }
+                bcr.ScannerOn = bOnOff;
+                bcr.ScannerEnable = bOnOff;
             }
             addLog("...scannerOnOff ended");
         }
@@ -338,7 +352,6 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
                 return;
             }
             addLog("readBarcodeThread setting up vars...");
-            _bReadingBarcode = true;
             lock (lockBarcodeData)
             {
                 _BarcodeText = "";
@@ -350,7 +363,9 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
                 scannerOnOff(true);
                 //start a scan
                 addLog("readBarcodeThread: allow one Read...");
+                //bcr.Read(0); blocking read
                 bcr.ThreadedRead(false);
+                _bReadingBarcode = true;
             }
             catch (ThreadAbortException ex)
             {
@@ -449,6 +464,8 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
             addLog("ScanIsReady started...");
             //OnScanReady(new EventArgs());
             OnScanReady(new Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs(sData, bIsSuccess)); //call event fire function
+            _BarcodeText = sData;
+            _IsSuccess = bIsSuccess;
             //_bReadingBarcode = false;
         }
         protected virtual void OnScanReady(EventArgs e)
