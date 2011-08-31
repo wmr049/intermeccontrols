@@ -157,6 +157,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
         {
             System.Diagnostics.Debug.WriteLine(s);
         }
+        private bool _bWaitLoopRunning = false;
         /// <summary>
         /// the main thread watching for state and delta events of scan button
         /// </summary>
@@ -165,6 +166,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
             addLog("waitLoop starting...");
             try
             {
+                _bWaitLoopRunning = true;
                 SystemEvent[] _events = new SystemEvent[3];
                 addLog("waitLoop setting up event array...");
                 _events[0] = new SystemEvent("StateLeftScan1", false, false);
@@ -208,6 +210,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
             catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine("waitLoop: Exception: " + ex.Message);
             }
+            _bWaitLoopRunning = false;
             addLog("...waitLoop EXIT");
         }
         /// <summary>
@@ -231,7 +234,11 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
                 _BarcodeText = _sErrorText;
                 _IsSuccess = false;
             }
-            ScanIsReady();
+            //direct call!
+            addLog("bcr_BarcodeRead calling ScanIsReady()");
+            ScanIsReady(_BarcodeText, false);
+            //ScanIsReady(); //indirect call
+
             addLog("bcr_BarcodeReadCanceled: disable scanner");
             scannerOnOff(false);
             addLog("...bcr_BarcodeReadCanceled");
@@ -254,7 +261,12 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
             {
                 _BarcodeText = Encoding.UTF8.GetString(bre.DataBuffer, 0, bre.BytesInBuffer);
                 changeText( _BarcodeText);
+                _IsSuccess = true;
             }
+            //direct call!
+            addLog("bcr_BarcodeRead calling ScanIsReady()");
+            ScanIsReady(_BarcodeText, true);
+            //ScanReady(this, new Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs(_BarcodeText, true));
 #if TESTMODE
             if (testcodes[testCodePos] == _BarcodeText)
             {
@@ -282,8 +294,8 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
             }
 #endif
 
-            addLog("bcr_BarcodeRead calling ScanIsReady()");
-            ScanIsReady();
+            //addLog("bcr_BarcodeRead calling ScanIsReady()");
+            //ScanIsReady();
             addLog("...bcr_BarcodeRead end.");
         }
 
@@ -426,36 +438,65 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
                 return __success; 
             }
         }
-        //Create an event
+        //Create an event, do not use directly!
         //public event EventHandler ScanReady;
         public event Hasci.TestApp.DeviceControlContracts.BarcodeEventHandler ScanReady;
         /// <summary>
         /// this will be called for successful and faulty scans
         /// </summary>
-        private void ScanIsReady()
+        private void ScanIsReady(string sData, bool bIsSuccess)
         {
             addLog("ScanIsReady started...");
-            OnScanReady(new EventArgs());
-            _bReadingBarcode = false;
+            //OnScanReady(new EventArgs());
+            OnScanReady(new Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs(sData, bIsSuccess)); //call event fire function
+            //_bReadingBarcode = false;
         }
         protected virtual void OnScanReady(EventArgs e)
+        {
+            if (ScanReady != null) //check if there is any listener
+            {
+                //fire event
+                ScanReady(this, new Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs(_BarcodeText, _IsSuccess));
+            }
+            _bReadingBarcode = false;
+        }
+        protected virtual void OnScanReady(Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs e)
         {
             if (ScanReady != null)
             {
                 lock (lockBarcodeData)
                 {
-                    ScanReady(this, new Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs(_BarcodeText, _IsSuccess));
+                    ScanReady(this, e);
                 }
             }
+            _bReadingBarcode = false;
         }
         public new void Dispose()
         {
             addLog("IntermecScanControl Dispose()...");
-            _continueWait = false; //signal thread to stop
+            _continueWait = false; //signal threads to stop
             SystemEvent waitEvent = new SystemEvent("EndWaitLoop52", false, false);
             waitEvent.PulseEvent();
             System.Threading.Thread.Sleep(100);
-
+            int iTry = 0;
+            while (_bWaitLoopRunning && iTry < 5)
+            {
+                System.Threading.Thread.Sleep(300);
+                iTry++;
+            }
+            addLog("IntermecScanControl Dispose(): ending Threads...");
+            //is the waitThread (waitLoop) still running?
+            if (waitThread != null)
+            {
+                addLog("IntermecScanControl Dispose(): ending event watch thread ...");
+                waitThread.Abort();
+            }
+            //is there still a readThread running?
+            if (readThread != null)
+            {
+                addLog("IntermecScanControl Dispose(): ending Barcode reading thread ...");
+                readThread.Abort();
+            }
             if (bcr != null)
             {
                 addLog("IntermecScanControl Dispose(): Calling ScannerOnOff(false)...");
@@ -481,17 +522,6 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
             }
             addLog("IntermecScanControl Dispose(): restoring Scan Button Key...");
             ITCTools.KeyBoard.restoreKey();
-            addLog("IntermecScanControl Dispose(): ending Threads...");
-            if (waitThread != null)
-            {
-                addLog("IntermecScanControl Dispose(): ending event watch thread ...");
-                waitThread.Abort();
-            }
-            if (readThread != null)
-            {
-                addLog("IntermecScanControl Dispose(): ending Barcode reading thread ...");
-                readThread.Abort();
-            }
             addLog("...IntermecScanControl Dispose(): end.");
             //base.Dispose(); do not use!!
         }

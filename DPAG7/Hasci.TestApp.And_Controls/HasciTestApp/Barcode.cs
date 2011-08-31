@@ -54,6 +54,9 @@ namespace Hasci.TestApp
                 ctrScan.Visible = false;
             }
             bFirstLoad = false;
+#if DEBUG
+            bSoundOn = false;
+#endif
         }
         private void deInitBarcode()
         {
@@ -104,8 +107,6 @@ namespace Hasci.TestApp
         }
         private void Barcode_Deactivate(object sender, EventArgs e)
         {
-            if (!bFirstLoad)
-                deInitBarcode();
 
         }
 
@@ -115,7 +116,6 @@ namespace Hasci.TestApp
                 initBarcode();
 
         }
-
     }
 }
 

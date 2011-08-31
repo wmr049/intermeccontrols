@@ -34,6 +34,7 @@
             this.textBoxScanResult = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.checkBoxVibro = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // pictureBoxOK
@@ -80,12 +81,22 @@
             this.checkBoxVibro.TabIndex = 6;
             this.checkBoxVibro.Text = "Vibrationfeedback";
             // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+            this.label2.Location = new System.Drawing.Point(20, 25);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(20, 25);
+            this.label2.Text = ".";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // Barcode
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(253)))), ((int)(((byte)(153)))));
             this.ClientSize = new System.Drawing.Size(480, 588);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.checkBoxVibro);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxScanResult);
@@ -96,7 +107,6 @@
             this.Text = "Barcode";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Activated += new System.EventHandler(this.Barcode_Activated);
-            this.Deactivate += new System.EventHandler(this.Barcode_Deactivate);
             this.ResumeLayout(false);
 
         }
@@ -108,6 +118,7 @@
         private System.Windows.Forms.TextBox textBoxScanResult;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBoxVibro;
+        private System.Windows.Forms.Label label2;
 
 
     }
