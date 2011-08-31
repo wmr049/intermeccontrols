@@ -18,9 +18,9 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls3
             string ssSetHWTrigger = "";
             uint iSetting;
             if (bOnOff)
-                iSetting = 0;
-            else
                 iSetting = 1;
+            else
+                iSetting = 0;
             uint uRes = 0;
             try
             {
