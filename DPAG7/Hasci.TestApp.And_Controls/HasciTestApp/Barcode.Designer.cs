@@ -106,6 +106,7 @@
             this.Name = "Barcode";
             this.Text = "Barcode";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Closed += new System.EventHandler(this.Barcode_Closed);
             this.Activated += new System.EventHandler(this.Barcode_Activated);
             this.ResumeLayout(false);
 

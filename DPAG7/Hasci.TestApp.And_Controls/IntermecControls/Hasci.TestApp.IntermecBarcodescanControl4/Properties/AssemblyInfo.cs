@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("IntermecBarcodescanControl2")]
+[assembly: AssemblyTitle("IntermecBarcodescanControl4")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Intermec Technologies")]
-[assembly: AssemblyProduct("IntermecBarcodescanControl2")]
+[assembly: AssemblyProduct("IntermecBarcodescanControl4")]
 [assembly: AssemblyCopyright("Copyright © Intermec Technologies 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
