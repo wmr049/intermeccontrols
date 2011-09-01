@@ -113,6 +113,12 @@ namespace Hasci.TestApp
                 initBarcode();
 
         }
+
+        private void Barcode_Closed(object sender, EventArgs e)
+        {
+            //we have to dispose the control before the main app can be closed correctly:
+            conScan.Dispose();
+        }
     }
 }
 

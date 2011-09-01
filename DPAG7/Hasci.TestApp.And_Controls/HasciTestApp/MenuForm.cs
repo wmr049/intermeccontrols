@@ -68,7 +68,10 @@ namespace Hasci.TestApp
                     {
                         exitKey++;
                         if (exitKey == 3)
+                        {
+                            
                             this.Close();
+                        }
                     }
                     else
                         exitKey = 0;

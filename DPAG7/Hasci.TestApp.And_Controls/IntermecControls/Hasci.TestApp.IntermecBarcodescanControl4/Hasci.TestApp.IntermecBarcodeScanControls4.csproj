@@ -50,6 +50,7 @@
       <HintPath>..\runtimes\Intermec.DataCollection.CF3.5.dll</HintPath>
     </Reference>
     <Reference Include="Intermec.DeviceManagement.SmartSystem.ITCSSApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acd169b56b6148ba" />
+    <Reference Include="Microsoft.Windowsce.Forms" />
     <Reference Include="mscorlib" />
     <Reference Include="Pocket.System.ComponentModel.Composition, Version=2009.12.10.0, Culture=neutral, PublicKeyToken=5179643cd5c8740b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

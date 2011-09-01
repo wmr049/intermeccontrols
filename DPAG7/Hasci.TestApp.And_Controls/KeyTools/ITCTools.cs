@@ -14,6 +14,86 @@ namespace ITCTools
         /// </summary>
         static ITC_KEYBOARD.CUSBkeys.usbKeyStruct _OldUsbKey = new ITC_KEYBOARD.CUSBkeys.usbKeyStruct();
 
+        public static int createMultiKey()
+        {
+            addLog("########### createMultiKey #################");
+            int iRet = -1;
+            ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
+            //get current keyboard mapping reg location
+            string sReg = ITC_KEYBOARD.CUSBkeys.getRegLocation();
+            //count Multikey entries, remember: Multikey numbering starts by 1 (not zero)! 
+            addLog("Opening subkey '" + sReg + "\\Multikeys'...");
+            Microsoft.Win32.RegistryKey reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sReg + "\\Multikeys", true);
+            int iNumKeys = reg.ValueCount;
+            addLog("Found " + iNumKeys.ToString() + " value entries");
+            #region usbkeys
+            //we need two entries in the last, new reg entry
+            //one to fire a vkey: 
+            //one to fire an named event
+            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKeyVKEY = new CUSBkeys.usbKeyStruct();
+            _usbKeyVKEY.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+            _usbKeyVKEY.bFlagMid = CUsbKeyTypes.usbFlagsMid.VKEY | CUsbKeyTypes.usbFlagsMid.NoRepeat;
+            _usbKeyVKEY.bFlagLow = CUsbKeyTypes.usbFlagsLow.MultiKeyIndex;
+            _usbKeyVKEY.bIntScan = (byte)ITC_KEYBOARD.VKEY.undef_0x88; //use vkey=0x88
+
+            byte[] bytesVKey = { (byte)_usbKeyVKEY.bFlagHigh, (byte)_usbKeyVKEY.bFlagMid, (byte)_usbKeyVKEY.bFlagLow, (byte)_usbKeyVKEY.bIntScan };
+            
+            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKeyEVENT = new CUSBkeys.usbKeyStruct();
+            _usbKeyEVENT.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+            _usbKeyEVENT.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;
+            _usbKeyEVENT.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
+            _usbKeyEVENT.bIntScan = 1;
+            byte[] bytesEventKey = { (byte)_usbKeyEVENT.bFlagHigh, (byte)_usbKeyEVENT.bFlagMid, (byte)_usbKeyEVENT.bFlagLow, (byte)_usbKeyEVENT.bIntScan };
+
+
+            byte[] bytesAll = new byte[bytesVKey.Length + bytesEventKey.Length];
+            System.Buffer.BlockCopy(bytesVKey, 0, bytesAll, 0, bytesVKey.Length);
+            System.Buffer.BlockCopy(bytesEventKey, 0, bytesAll, bytesVKey.Length, bytesEventKey.Length);
+            #endregion
+            //check if the mutlikey is already in place
+            string sValueName = "Multi" + iNumKeys.ToString("");
+            byte[] bValues=null;
+            try
+            {
+                bValues = (byte[])reg.GetValue(sValueName, null);
+                addLog("GetValue last multikey ('"+ sValueName + "') OK");
+            }
+            catch (Exception ex)
+            {
+                addLog("GetValue last multikey ('"+ sValueName + "') failed" + ex.Message);
+            }
+            //write new mutlikey?
+            if(bValues!=null){
+                if (!compareBytes(bValues, bytesAll))
+                {
+                    //create a new entry
+                    try
+                    {
+                        reg.SetValue("Multi" + (iNumKeys+1).ToString(), bytesAll, Microsoft.Win32.RegistryValueKind.Binary);
+                        addLog("Creating new multikey value OK: " + reg.ToString() );
+                    }
+                    catch (Exception ex)
+                    {
+                        addLog("Creating new multikey value failed" + ex.Message);
+                    }
+                }
+            }
+            //change the scanner key to point to the new multikey index
+            mapScanKey2Multi((byte)(iNumKeys+1));
+            addLog("----------- createMultiKey -----------------");
+            return iRet;
+        }
+        private static bool compareBytes(byte[] ba1, byte[] ba2)
+        {
+            if (ba1.Length != ba2.Length)
+                return false;
+            for (int i = 0; i < ba1.Length; i++)
+            {
+                if (ba1[i] != ba2[i])
+                    return false;
+            }
+            return true;
+        }
         /// <summary>
         /// change the event names of scanbutton to StateLeftScan1 and DeltaLeftScan1
         /// </summary>
@@ -241,7 +321,85 @@ namespace ITCTools
                 cusb.bFlagMid.ToString(),
                 cusb.bFlagLow.ToString()
                 )
-                );
+            );
+        }
+        /// <summary>
+        /// restore scan button mapping to point to named event 1
+        /// </summary>
+        public static void restoreScanKeyDefault()
+        {
+            ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
+            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKey = new CUSBkeys.usbKeyStruct();
+            int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
+            //change the scan button back to the original events
+            if (iIdx != -1)
+            {
+
+                _usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+                _usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;// | CUsbKeyTypes.usbFlagsMid.Silent;
+                _usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
+                _usbKey.bIntScan = 1;
+
+                addLog("scanbutton key index is " + iIdx.ToString());
+                //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+                //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
+                //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
+                _usbKey.bIntScan = 1;
+                for (int iPlane = 0; iPlane < _cusb.getNumPlanes(); iPlane++)
+                {
+                    addLog("using plane: " + iPlane.ToString());
+                    if (_cusb.setKey(iPlane, _usbKey.bScanKey, _usbKey) == 0) //changed "setKey(0," to "setKey(i,"
+                        addLog("setKey for scanbutton key OK");
+                    else
+                        addLog("setKey for scanbutton key failed");
+                }
+                _cusb.writeKeyTables();
+                mapAllSide2NOOP();
+            }
+            else
+            {
+                addLog("Could not get index for scanbutton key");
+            }
+        }
+        /// <summary>
+        /// restore scan button mapping to point to named event 1
+        /// </summary>
+        public static void mapScanKey2Multi(byte b)
+        {
+            addLog("########### mapScanKey2Multi #################");
+            ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
+            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKey = new CUSBkeys.usbKeyStruct();
+            int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
+            //change the scan button back to the original events
+            if (iIdx != -1)
+            {
+
+                _usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+                _usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;// | CUsbKeyTypes.usbFlagsMid.Silent;
+                _usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.MultiKeyIndex;
+                _usbKey.bIntScan = b;
+
+                addLog("scanbutton key index is " + iIdx.ToString());
+                //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+                //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
+                //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
+                _usbKey.bIntScan = 1;
+                for (int iPlane = 0; iPlane < _cusb.getNumPlanes(); iPlane++)
+                {
+                    addLog("using plane: " + iPlane.ToString());
+                    if (_cusb.setKey(iPlane, _usbKey.bScanKey, _usbKey) == 0) //changed "setKey(0," to "setKey(i,"
+                        addLog("setKey for scanbutton key OK");
+                    else
+                        addLog("setKey for scanbutton key failed");
+                }
+                _cusb.writeKeyTables();
+                mapAllSide2NOOP();
+            }
+            else
+            {
+                addLog("Could not get index for scanbutton key");
+            }
+            addLog("----------- mapScanKey2Multi -----------------");
         }
     }
 }

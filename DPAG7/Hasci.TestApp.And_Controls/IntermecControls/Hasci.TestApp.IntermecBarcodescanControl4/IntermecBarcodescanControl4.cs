@@ -1,4 +1,5 @@
 ﻿//#define TESTMODE
+//#define USEWAITLOOP
 //scan some barcodes in a given sequence as fast as possible
 using System;
 using System.Linq;
@@ -23,6 +24,8 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
      *  scan the short code of p. 12
      *  ERROR: scanner shows old barcode!
      *  ERROR: press scan into the the air and may get the short barcode
+     *  
+     * Now started this BarcodeScanControl to use the BarcodeReader as it was designed
     */
 
     /// <summary>
@@ -67,40 +70,20 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
         /// </summary>
         private string _BarcodeText = "Barcode nicht anzeigbar";
         /// <summary>
-        /// sync access to _BarcodeText using a lock object
-        /// </summary>
-        private object lockBarcodeData = new object();
-        /// <summary>
         /// internal var to hold good/bad scan
         /// </summary>
         private bool _IsSuccess = false;
-        /// <summary>
-        /// control var to avoid multiple calls to barcode scans
-        /// </summary>
-        private bool _bReadingBarcode = false;
-        /// <summary>
-        /// thread stop var
-        /// </summary>
-        bool _continueWait = true;
-        /// <summary>
-        /// thread that starts a barcode read
-        /// </summary>
-        Thread readThread;
-        /// <summary>
-        /// thread that watches the scan button
-        /// </summary>
-        System.Threading.Thread waitThread;
 
         public IntermecBarcodescanControl4()
         {
             InitializeComponent();
             try
             {
-                addLog("IntermecBarcodescanControl2: setHWTrigger(true)...");
+                addLog("IntermecBarcodescanControl4: setHWTrigger(true)...");
                 //enable HW trigger, a workaround as HW trigger is sometimes disabled on BarcodeReader.Dispose()
                 //if (!S9CconfigClass.S9Cconfig.HWTrigger.setHWTrigger(true))
                 //{
-                //    addLog("IntermecBarcodescanControl2: setHWTrigger(true)...FAILED. Trying again");
+                //    addLog("IntermecBarcodescanControl4: setHWTrigger(true)...FAILED. Trying again");
                 //    Thread.Sleep(50);
                 //    S9CconfigClass.S9Cconfig.HWTrigger.setHWTrigger(true); //try again
                 //}
@@ -108,30 +91,39 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
                 YetAnotherHelperClass.setHWTrigger(true);
                 //change number of good read beeps to zero
                 YetAnotherHelperClass.setNumberOfGoodReadBeeps(0);
-                addLog("IntermecBarcodescanControl2: mapKey()...");
+                addLog("IntermecBarcodescanControl4: mapKey()...");
                 //we need full control of scan start and end
-                ITCTools.KeyBoard.mapKey();
+                //ITCTools.KeyBoard.mapKey();
+                //we use the standard scan key assignement:
+                addLog("IntermecBarcodescanControl4: restoreScanKeyDefault()...");
+                ITCTools.KeyBoard.restoreScanKeyDefault();
             }
             catch (Exception ex)
             {
-                addLog("Exception in IntermecBarcodescanControl2: setHWTrigger(true)..." + ex.Message);
+                addLog("Exception in IntermecBarcodescanControl4: setHWTrigger(true)..." + ex.Message);
             }
             try
             {
-                addLog("IntermecBarcodescanControl2: new BarcodeReader()...");
-                bcr = new BarcodeReader(this, "default");// ();
-                addLog("IntermecBarcodescanControl2: BarcodeReader adding event handlers...");
-                bcr.BarcodeRead += new BarcodeReadEventHandler(bcr_BarcodeRead);
-                bcr.BarcodeReadCanceled += new BarcodeReadCancelEventHandler(bcr_BarcodeReadCanceled);
-                bcr.BarcodeReadError += new BarcodeReadErrorEventHandler(bcr_BarcodeReadError);
+                //Cannot use Keydown etc within a usercontrol, we will not get the events!!!!!
+                //ITCTools.KeyBoard.createMultiKey();
+#if USEWAITLOOP
                 addLog("IntermecBarcodescanControl2: starting named event watch thread...");
                 waitThread = new System.Threading.Thread(waitLoop);
                 waitThread.Start();
-                addLog("IntermecBarcodescanControl2: enabling Scanner...");
+#endif
+                addLog("IntermecBarcodescanControl4: new BarcodeReader()...");
+                //create a new BarcodeReader instance
+                bcr = new BarcodeReader(this, "default");// ();
+                addLog("IntermecBarcodescanControl4: BarcodeReader adding event handlers...");
+                bcr.BarcodeRead += new BarcodeReadEventHandler(bcr_BarcodeRead);
+                bcr.BarcodeReadCanceled += new BarcodeReadCancelEventHandler(bcr_BarcodeReadCanceled);
+                bcr.BarcodeReadError += new BarcodeReadErrorEventHandler(bcr_BarcodeReadError);
+                addLog("IntermecBarcodescanControl4: enabling Scanner...");
                 bcr.ScannerEnable = true;
-                addLog("IntermecBarcodescanControl2: ScannerOn=false...");
+                addLog("IntermecBarcodescanControl4: ScannerOn=false...");
                 bcr.ScannerOn = false;
-
+                addLog("Enabling event driver scanning");
+                bcr.ThreadedRead(true);
             }
             catch (BarcodeReaderException ex)
             {
@@ -145,7 +137,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
             }
             if (bcr == null)
             {
-                addLog("IntermecBarcodescanControl2: BarcodeReader init FAILED");
+                addLog("IntermecBarcodescanControl4: BarcodeReader init FAILED");
                 throw new System.IO.FileNotFoundException("Intermec.Datacollection.dll or ITCScan.DLL missing");
             }
 #if TESTMODE
@@ -168,62 +160,6 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
             //else
             //    System.Threading.Thread.Sleep(1);
         }
-        private bool _bWaitLoopRunning = false;
-        /// <summary>
-        /// the main thread watching for state and delta events of scan button
-        /// </summary>
-        void waitLoop()
-        {
-            addLog("waitLoop starting...");
-            try
-            {
-                _bWaitLoopRunning = true;
-                SystemEvent[] _events = new SystemEvent[3];
-                addLog("waitLoop setting up event array...");
-                _events[0] = new SystemEvent("StateLeftScan1", false, false);
-                _events[1] = new SystemEvent("DeltaLeftScan1", false, false);
-                _events[2] = new SystemEvent("EndWaitLoop52", false, false);
-                do
-                {
-                    addLog("waitLoop WaitForMultipleObjects...");
-                    SystemEvent signaledEvent = SyncBase.WaitForMultipleObjects(
-                                                -1,  // wait for ever
-                                                _events
-                                                 ) as SystemEvent;
-                    addLog("waitLoop WaitForMultipleObjects released: ");
-                    if (_continueWait)
-                    {
-                        if (signaledEvent == _events[0])
-                        {
-                            addLog("######### Caught StateLeftScan ########");
-                            onStateScan();
-                        }
-                        if (signaledEvent == _events[1])
-                        {
-                            addLog("######### Caught DeltaLeftScan ########");
-                            onDeltaScan();
-                        }
-                        if (signaledEvent == _events[2])
-                        {
-                            addLog("######### Caught EndWaitLoop52 ########");
-                            _continueWait = false;
-                        }
-                    }
-                    addLog("waitLoop sleep(1)");
-                    System.Threading.Thread.Sleep(1);
-                } while (_continueWait);
-                addLog("waitLoop while ended by _continueWait");
-            }
-            catch (ThreadAbortException ex)
-            {
-                System.Diagnostics.Debug.WriteLine("waitLoop: ThreadAbortException: " + ex.Message);
-            }
-            catch (Exception ex) {
-                System.Diagnostics.Debug.WriteLine("waitLoop: Exception: " + ex.Message);
-            }
-            _bWaitLoopRunning = false;
-            addLog("...waitLoop EXIT");
-        }
         /// <summary>
         /// called if a barcode read error (whatever that means) occured 
         /// </summary>
@@ -232,6 +168,8 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
         void bcr_BarcodeReadError(object sender, BarcodeReadErrorEventArgs breErr)
         {
             addLog("bcr_BarcodeReadError: " + breErr.errMessage);
+            addLog("bcr_BarcodeReadError: firing ScanIsReady with error");
+            ScanIsReady(_sErrorText, false);
         }
         /// <summary>
         /// eventhandler that is invoked on barcode CancelRead calls
@@ -246,13 +184,11 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
             //    _IsSuccess = false;
             //}
             //direct call!
-            addLog("bcr_BarcodeRead calling ScanIsReady()");
+            addLog("bcr_BarcodeReadCanceled calling ScanIsReady()");
             ScanIsReady(_sErrorText, false);
             //ScanIsReady(); //indirect call
 
-            addLog("bcr_BarcodeReadCanceled: disable scanner");
-            scannerOnOff(false);
-            addLog("...bcr_BarcodeReadCanceled");
+            addLog("...bcr_BarcodeReadCanceled ended");
         }
         /// <summary>
         /// eventhandler for a recognized barcode
@@ -278,9 +214,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
             //direct call!
             addLog("bcr_BarcodeRead calling ScanIsReady()");
             ScanIsReady(bre.strDataBuffer, true);
-            //changeText( _BarcodeText);
 
-            //ScanReady(this, new Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs(_BarcodeText, true));
 #if TESTMODE
             if (testcodes[testCodePos] == _BarcodeText)
             {
@@ -302,141 +236,19 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
                 testCodePos=0;
             addLog("testCodePos=" + testCodePos.ToString());
 #else
-            lock (lockBarcodeData)
-            {
-                _IsSuccess = true;
-            }
 #endif
-
             //addLog("bcr_BarcodeRead calling ScanIsReady()");
             //ScanIsReady();
             addLog("...bcr_BarcodeRead end.");
         }
 
         /// <summary>
-        /// switch scanner off and Cancel a current Read
-        /// </summary>
-        /// <param name="bOnOff"></param>
-        private void scannerOnOff(bool bOnOff)
-        {
-            if(bOnOff)
-                addLog("scannerOnOff called with TRUE...");
-            else
-                addLog("scannerOnOff called with FALSE...");
-            if (bcr != null)
-            {
-                if (!bOnOff)
-                {                    
-                    if(_bReadingBarcode)
-                        bcr.CancelRead(true);
-                }
-                bcr.ScannerOn = bOnOff;
-                bcr.ScannerEnable = bOnOff;
-            }
-            addLog("...scannerOnOff ended");
-        }
-        /// <summary>
-        /// this thread simply starts a one shot trial to scan a barcode
-        /// </summary>
-        private void readBarcodeThread()
-        {
-            addLog("readBarcodeThread starting...");
-            if (bcr == null)
-            {
-                addLog("...readBarcodeThread returned for bcr==null");
-                return;
-            }
-            if (_bReadingBarcode)
-            {
-                addLog("...readBarcodeThread returned for _bReadingBarcode (in progress)");
-                return;
-            }
-            addLog("readBarcodeThread setting up vars...");
-            lock (lockBarcodeData)
-            {
-                _BarcodeText = "";
-                _IsSuccess = false;
-            }
-            try
-            {
-                addLog("readBarcodeThread: enabling BarcodeReader and ScannerOn...");
-                scannerOnOff(true);
-                //start a scan
-                addLog("readBarcodeThread: allow one Read...");
-                //bcr.Read(0); blocking read
-                bcr.ThreadedRead(false);
-                _bReadingBarcode = true;
-            }
-            catch (ThreadAbortException ex)
-            {
-                addLog("readBarcodeThread: ThreadAbortException:"+ex.Message);
-            }
-            catch (Exception ex)
-            {
-                addLog("readBarcodeThread Exception:"+ex.Message);
-            }
-            addLog("...readBarcodeThread end");
-        }
-
-        /// <summary>
-        /// var to avoid mutiple calls into OnStateScan
-        /// </summary>
-        bool _bLastState = false;
-        /// <summary>
-        /// function that is called periodically during KeyPress
-        /// </summary>
-        void onStateScan()
-        {
-            addLog("onStateScan started...");
-            if (_bLastState)
-            { //already pressed
-                addLog("...onStateScan: already pressed (_bLastState)");
-                return;
-            }
-            changeText("");
-            _bLastState = true; //avoid multiple calls
-            //start a scan
-            addLog("onStateScan starting Read thread...");
-            readThread = new Thread(readBarcodeThread);
-            readThread.Start();
-            addLog("...onStateScan ended");
-        }
-        /// <summary>
-        /// function that is called on every KeyRelease
-        /// </summary>
-        void onDeltaScan()
-        {
-            addLog("onDeltaScan started...");
-            //stop scan
-            addLog("onDeltaScan checking thread...");
-            if (readThread != null)
-            {
-                addLog("onDeltaScan ending thread...");
-                readThread.Abort();
-            }
-            addLog("onDeltaScan testing _IsSuccess ...");
-            bool __success;
-            lock(lockBarcodeData)
-            { 
-                __success = _IsSuccess; 
-            }
-            if (!__success)
-            {
-                addLog("onDeltaScan invoking CancelRead()");
-                bcr.CancelRead(true);
-            }
-            _bLastState = false;
-        }
-        /// <summary>
         /// this text gives the barcode data
         /// </summary>
         public string BarcodeText
         {
             get {
-                lock (lockBarcodeData)
-                {
                     return _BarcodeText;
-                }
             }
         }
         /// <summary>
@@ -445,12 +257,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
         public bool IsSuccess
         {
             get {
-                bool __success;
-                lock(lockBarcodeData)
-                { 
-                    __success = _IsSuccess; 
-                }
-                return __success; 
+                return _IsSuccess; 
             }
         }
         //Create an event, do not use directly!
@@ -475,22 +282,19 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
                 //fire event
                 ScanReady(this, new Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs(_BarcodeText, _IsSuccess));
             }
-            _bReadingBarcode = false;
         }
         protected virtual void OnScanReady(Hasci.TestApp.DeviceControlContracts.BarcodeEventArgs e)
         {
             if (ScanReady != null)
             {
-                lock (lockBarcodeData)
-                {
-                    ScanReady(this, e);
-                }
+                ScanReady(this, e);
             }
-            _bReadingBarcode = false;
         }
         public new void Dispose()
         {
             addLog("IntermecScanControl Dispose()...");
+#if USEWAITLOOP
+            //stop WaitLoop thread
             _continueWait = false; //signal threads to stop
             SystemEvent waitEvent = new SystemEvent("EndWaitLoop52", false, false);
             waitEvent.PulseEvent();
@@ -508,16 +312,12 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
                 addLog("IntermecScanControl Dispose(): ending event watch thread ...");
                 waitThread.Abort();
             }
-            //is there still a readThread running?
-            if (readThread != null)
-            {
-                addLog("IntermecScanControl Dispose(): ending Barcode reading thread ...");
-                readThread.Abort();
-            }
+#endif
+            //dispose BarcodeReader
             if (bcr != null)
             {
-                addLog("IntermecScanControl Dispose(): Calling ScannerOnOff(false)...");
-                scannerOnOff(false);
+//                addLog("IntermecScanControl Dispose(): Calling CancelRead(true)...");
+//                bcr.CancelRead(true);
                 addLog("IntermecScanControl Dispose(): Disposing BarcodeReader...");
                 //bcr.ThreadedRead(false);
                 bcr.BarcodeRead -= bcr_BarcodeRead;
@@ -558,6 +358,112 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls4
                 txtBoxScan.Text = text;
             }
         }
+
+        private void IntermecBarcodescanControl4_KeyDown(object sender, KeyEventArgs e)
+        {
+            addLog("BarcodeScanControl4 got Keydown: " + e.KeyCode.ToString());
+        }
+#if USEWAITLOOP
+        #region eventloop
+        /// <summary>
+        /// thread that watches the scan button
+        /// </summary>
+        System.Threading.Thread waitThread;
+        private bool _bWaitLoopRunning = false;
+        /// <summary>
+        /// var to control waitLoop running
+        /// </summary>
+        private bool _continueWait = true;
+        /// <summary>
+        /// the main thread watching for state and delta events of scan button
+        /// this variant uses the original named events and so will never get the DeltaEvent!
+        /// </summary>
+        void waitLoop()
+        {
+            addLog("waitLoop starting...");
+            try
+            {
+                _bWaitLoopRunning = true;
+                SystemEvent[] _events = new SystemEvent[3];
+                addLog("waitLoop setting up event array...");
+                _events[0] = new SystemEvent("StateLeftScan", false, false);
+                _events[1] = new SystemEvent("DeltaLeftScan", false, false);
+                _events[2] = new SystemEvent("EndWaitLoop52", false, false);
+                do
+                {
+                    addLog("waitLoop WaitForMultipleObjects...");
+                    SystemEvent signaledEvent = SyncBase.WaitForMultipleObjects(
+                                                -1,  // wait for ever
+                                                _events
+                                                 ) as SystemEvent;
+                    addLog("waitLoop WaitForMultipleObjects released: ");
+                    if (_continueWait)
+                    {
+                        if (signaledEvent == _events[0])
+                        {
+                            addLog("######### Caught StateLeftScan ########");
+                            onStateScan();
+                        }
+                        if (signaledEvent == _events[1])
+                        {
+                            addLog("######### Caught DeltaLeftScan ########");
+                            onDeltaScan();
+                        }
+                        if (signaledEvent == _events[2])
+                        {
+                            addLog("######### Caught EndWaitLoop52 ########");
+                            _continueWait = false;
+                        }
+                    }
+                    addLog("waitLoop sleep(1)");
+                    System.Threading.Thread.Sleep(1);
+                } while (_continueWait);
+                addLog("waitLoop while ended by _continueWait");
+            }
+            catch (ThreadAbortException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("waitLoop: ThreadAbortException: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("waitLoop: Exception: " + ex.Message);
+            }
+            _bWaitLoopRunning = false;
+            addLog("...waitLoop EXIT");
+        }
+        /// <summary>
+        /// var to avoid mutiple calls into OnStateScan
+        /// </summary>
+        bool _bLastState = false;
+        /// <summary>
+        /// function that is called periodically during KeyPress
+        /// </summary>
+        void onStateScan()
+        {
+            addLog("onStateScan started...");
+            if (_bLastState)
+            { //already pressed
+                addLog("...onStateScan: already pressed (_bLastState)");
+                return;
+            }
+            changeText("");
+            _bLastState = true; //avoid multiple calls
+            //start a scan
+            addLog("...onStateScan ended");
+        }
+        /// <summary>
+        /// function that is called on every KeyRelease
+        /// </summary>
+        void onDeltaScan()
+        {
+            addLog("onDeltaScan started...");
+            //stop scan
+            addLog("onDeltaScan testing _IsSuccess ...");
+            bool __success;
+            _bLastState = false;
+        }
+        #endregion
+#endif
     }
 
     [Obsolete("currently unused")]
