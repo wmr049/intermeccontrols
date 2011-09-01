@@ -54,9 +54,6 @@ namespace Hasci.TestApp
                 ctrScan.Visible = false;
             }
             bFirstLoad = false;
-#if DEBUG
-            bSoundOn = false;
-#endif
         }
         private void deInitBarcode()
         {

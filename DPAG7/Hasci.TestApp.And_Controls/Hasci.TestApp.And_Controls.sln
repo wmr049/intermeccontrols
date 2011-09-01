@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecBarco
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.DeviceControlContracts", "DeviceControlInterfaces\Hasci.DeviceControlContracts.csproj", "{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecBarcodeScanControls4", "IntermecControls\Hasci.TestApp.IntermecBarcodescanControl4\Hasci.TestApp.IntermecBarcodeScanControls4.csproj", "{3668408C-C018-4AA1-9108-EABEBE2B1A8D}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -67,17 +69,19 @@ Global
 		{66EC468E-FB87-4DFC-B6A6-29695BA3F43B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{66EC468E-FB87-4DFC-B6A6-29695BA3F43B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B289FE06-7EFA-45DA-8A44-46D23EC15CF8}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
