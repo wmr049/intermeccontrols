@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.DeviceControlContract
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecBarcodeScanControls4", "IntermecControls\Hasci.TestApp.IntermecBarcodescanControl4\Hasci.TestApp.IntermecBarcodeScanControls4.csproj", "{3668408C-C018-4AA1-9108-EABEBE2B1A8D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hasci.TestApp.IntermecBarcodeScanControls5", "IntermecControls\Hasci.TestApp.IntermecBarcodescanControl5\Hasci.TestApp.IntermecBarcodeScanControls5.csproj", "{81352A41-E245-48D5-9EE9-8D85AEB42594}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -77,11 +79,13 @@ Global
 		{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E2D0FB10-7BFF-4B21-9884-B3F660665C2E}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3668408C-C018-4AA1-9108-EABEBE2B1A8D}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{81352A41-E245-48D5-9EE9-8D85AEB42594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81352A41-E245-48D5-9EE9-8D85AEB42594}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81352A41-E245-48D5-9EE9-8D85AEB42594}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{81352A41-E245-48D5-9EE9-8D85AEB42594}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81352A41-E245-48D5-9EE9-8D85AEB42594}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81352A41-E245-48D5-9EE9-8D85AEB42594}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
