@@ -33,16 +33,16 @@ namespace ITCTools
             ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKeyVKEY = new CUSBkeys.usbKeyStruct();
             _usbKeyVKEY.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
             _usbKeyVKEY.bFlagMid = CUsbKeyTypes.usbFlagsMid.VKEY | CUsbKeyTypes.usbFlagsMid.NoRepeat;
-            _usbKeyVKEY.bFlagLow = CUsbKeyTypes.usbFlagsLow.MultiKeyIndex;
+            _usbKeyVKEY.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
             _usbKeyVKEY.bIntScan = (byte)ITC_KEYBOARD.VKEY.undef_0x88; //use vkey=0x88
 
             byte[] bytesVKey = { (byte)_usbKeyVKEY.bFlagHigh, (byte)_usbKeyVKEY.bFlagMid, (byte)_usbKeyVKEY.bFlagLow, (byte)_usbKeyVKEY.bIntScan };
             
             ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKeyEVENT = new CUSBkeys.usbKeyStruct();
             _usbKeyEVENT.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
-            _usbKeyEVENT.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;
-            _usbKeyEVENT.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
-            _usbKeyEVENT.bIntScan = 1;
+            _usbKeyEVENT.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat | CUsbKeyTypes.usbFlagsMid.VKEY;
+            _usbKeyEVENT.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
+            _usbKeyEVENT.bIntScan = 0x88;
             byte[] bytesEventKey = { (byte)_usbKeyEVENT.bFlagHigh, (byte)_usbKeyEVENT.bFlagMid, (byte)_usbKeyEVENT.bFlagLow, (byte)_usbKeyEVENT.bIntScan };
 
 
@@ -81,6 +81,118 @@ namespace ITCTools
             //change the scanner key to point to the new multikey index
             mapScanKey2Multi((byte)(iNumKeys+1));
             addLog("----------- createMultiKey -----------------");
+            reg.Close();
+            return iRet;
+        }
+        /// <summary>
+        /// create a multikey event with two event pointers
+        /// one points to StateLeftScan and DeltaLeftScan,
+        /// other points to StateLeftScan1 and DeltaLeftScan1
+        /// </summary>
+        /// <returns></returns>
+        public static int createMultiKey2Events()
+        {
+            addLog("########### createMultiKey #################");
+            int iRet = -1;
+            ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
+            //get current keyboard mapping reg location
+            string sReg = ITC_KEYBOARD.CUSBkeys.getRegLocation();
+            //create State1 and Delta1 evnet entries
+            int newScanEventNumber = createScanEvents1();
+            //count Multikey entries, remember: Multikey numbering starts by 1 (not zero)! 
+            addLog("Opening subkey '" + sReg + "\\Multikeys'...");
+            Microsoft.Win32.RegistryKey reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sReg + "\\Multikeys", true);
+            int iNumKeys = reg.ValueCount;
+            addLog("Found " + iNumKeys.ToString() + " value entries");
+            #region usbkeys
+            //we need two entries in the last, new reg entry
+            //one to fire a vkey: 
+            //one to fire an named event
+            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKeyVKEY = new CUSBkeys.usbKeyStruct();
+            _usbKeyVKEY.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+            _usbKeyVKEY.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;
+            _usbKeyVKEY.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
+            _usbKeyVKEY.bIntScan = 5;
+
+            byte[] bytesVKey = { (byte)_usbKeyVKEY.bFlagHigh, (byte)_usbKeyVKEY.bFlagMid, (byte)_usbKeyVKEY.bFlagLow, (byte)_usbKeyVKEY.bIntScan };
+
+            ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKeyEVENT = new CUSBkeys.usbKeyStruct();
+            _usbKeyEVENT.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+            _usbKeyEVENT.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;
+            _usbKeyEVENT.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
+            _usbKeyEVENT.bIntScan = 1;
+            byte[] bytesEventKey = { (byte)_usbKeyEVENT.bFlagHigh, (byte)_usbKeyEVENT.bFlagMid, (byte)_usbKeyEVENT.bFlagLow, (byte)_usbKeyEVENT.bIntScan };
+
+
+            byte[] bytesAll = new byte[bytesVKey.Length + bytesEventKey.Length];
+            System.Buffer.BlockCopy(bytesVKey, 0, bytesAll, 0, bytesVKey.Length);
+            System.Buffer.BlockCopy(bytesEventKey, 0, bytesAll, bytesVKey.Length, bytesEventKey.Length);
+            #endregion
+            //check if the mutlikey is already in place
+            string sValueName = "Multi" + iNumKeys.ToString("");
+            byte[] bValues = null;
+            try
+            {
+                bValues = (byte[])reg.GetValue(sValueName, null);
+                addLog("GetValue last multikey ('" + sValueName + "') OK");
+            }
+            catch (Exception ex)
+            {
+                addLog("GetValue last multikey ('" + sValueName + "') failed" + ex.Message);
+            }
+            //write new mutlikey?
+            if (bValues != null)
+            {
+                if (!compareBytes(bValues, bytesAll))
+                {
+                    //create a new entry
+                    try
+                    {
+                        reg.SetValue("Multi" + (iNumKeys + 1).ToString(), bytesAll, Microsoft.Win32.RegistryValueKind.Binary);
+                        addLog("Creating new multikey value OK: " + reg.ToString());
+                        iNumKeys++;
+                    }
+                    catch (Exception ex)
+                    {
+                        addLog("Creating new multikey value failed" + ex.Message);
+                    }
+                }
+            }
+            //change the scanner key to point to the multikey index
+            mapScanKey2Multi((byte)(iNumKeys));
+            addLog("----------- createMultiKey -----------------");
+            reg.Close();
+            return iRet;
+        }
+        static int createScanEvents1()
+        {
+            int iRet = 0;
+            //add two new events
+            string sReg = ITC_KEYBOARD.CUSBkeys.getRegLocation();
+            Microsoft.Win32.RegistryKey reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sReg + "\\Events\\State", true);
+            int iNumKeys = reg.ValueCount;
+            //check if there is already a StateLeftScan1 entry
+            bool bFound = false;
+            string[] sValueNames = reg.GetValueNames();
+            for (int i=1; i <= iNumKeys; i++ )
+            {
+                string t = (string)reg.GetValue(sValueNames[i-1]);
+                if (t.Equals("StateLeftScan1", StringComparison.OrdinalIgnoreCase))
+                {
+                    bFound = true;
+                    iRet = Convert.ToInt16(sValueNames[i-1].Substring("Event".Length));
+                    break;
+                }
+            }
+            if (!bFound) //create new entries
+            {
+                //for(int i=1; i<=sValueNames.Length;
+                reg.SetValue("Event"+(iNumKeys+1).ToString(), "StateLeftScan1");
+                reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sReg + "\\Events\\Delta", true);
+                reg.SetValue("Event" + (iNumKeys + 1).ToString(), "DeltaLeftScan1");
+                iRet = iNumKeys + 1;
+            }
+            reg.Close();
             return iRet;
         }
         private static bool compareBytes(byte[] ba1, byte[] ba2)
@@ -370,12 +482,10 @@ namespace ITCTools
             ITC_KEYBOARD.CUSBkeys _cusb = new ITC_KEYBOARD.CUSBkeys();
             ITC_KEYBOARD.CUSBkeys.usbKeyStruct _usbKey = new CUSBkeys.usbKeyStruct();
             int iIdx = _cusb.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref _usbKey);
-            //change the scan button back to the original events
             if (iIdx != -1)
             {
-
                 _usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
-                _usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat;// | CUsbKeyTypes.usbFlagsMid.Silent;
+                _usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat | CUsbKeyTypes.usbFlagsMid.Silent;//
                 _usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.MultiKeyIndex;
                 _usbKey.bIntScan = b;
 
@@ -383,7 +493,6 @@ namespace ITCTools
                 //_usbKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
                 //_usbKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NOOP;
                 //_usbKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NormalKey;
-                _usbKey.bIntScan = 1;
                 for (int iPlane = 0; iPlane < _cusb.getNumPlanes(); iPlane++)
                 {
                     addLog("using plane: " + iPlane.ToString());
