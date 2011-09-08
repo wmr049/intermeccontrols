@@ -8,7 +8,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
     class RandomClass
     {
         int _iSeed;
-        double dRnd;
+//        double dRnd;
         Random _random;
         double _treshold = 0.3;
         public RandomClass()
