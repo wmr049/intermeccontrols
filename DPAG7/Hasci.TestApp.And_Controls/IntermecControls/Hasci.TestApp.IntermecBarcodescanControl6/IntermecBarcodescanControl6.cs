@@ -1,6 +1,9 @@
 ﻿//scan some barcodes in a given sequence as fast as possible
 //#define TESTMODE
-#define RANDOMBADSCANS
+//#define RANDOMBADSCANS
+//the following define enables usage of new NoBarcodeRead event
+#define NoBarcodeRead
+
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -127,6 +130,10 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
                 bcr = new BarcodeReader(this, "default");// ();
                 addLog("IntermecBarcodescanControl5: BarcodeReader adding event handlers...");
                 bcr.BarcodeRead += new BarcodeReadEventHandler(bcr_BarcodeRead);
+#if NoBarcodeRead
+                //modded code for new NoBarcodeRead feature
+                bcr.NoBarcodeRead += new NoBarcodeReadEventHandler(bcr_NoBarcodeRead);
+#endif
                 bcr.BarcodeReadCanceled += new BarcodeReadCancelEventHandler(bcr_BarcodeReadCanceled);
                 bcr.BarcodeReadError += new BarcodeReadErrorEventHandler(bcr_BarcodeReadError);
                 addLog("IntermecBarcodescanControl5: enabling Scanner...");
@@ -171,6 +178,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
             //else
             //    System.Threading.Thread.Sleep(1);
         }
+#if NoBarcodeRead
         /// <summary>
         /// called if a barcode read error (whatever that means) occured 
         /// </summary>
@@ -182,6 +190,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
             addLog("bcr_BarcodeReadError: firing ScanIsReady with error");
             ScanIsReady(_sErrorText, false);
         }
+#endif
         /// <summary>
         /// eventhandler that is invoked on barcode CancelRead calls
         /// </summary>
@@ -201,6 +210,21 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
 
             addLog("...bcr_BarcodeReadCanceled ended");
         }
+
+        /// <summary>
+        /// new barcode object event handler
+        /// supports a NoBarcodeRead feature
+        /// user pressed/released scan button without any barcode read in between
+        /// signals datacollection session started and ended without a barcode read
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="noBre"></param>
+        void bcr_NoBarcodeRead(object sender, NoBarcodeReadEventArgs noBre)
+        {
+            ScanIsReady(_sErrorText, false);
+        }
+
+
         /// <summary>
         /// eventhandler for a recognized barcode
         /// </summary>
