@@ -350,7 +350,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
                 bcr.BarcodeRead -= bcr_BarcodeRead;
                 try
                 {
-                    bcr.EnableNoBarcodeReadEvent = true;
+                    bcr.EnableNoBarcodeReadEvent = false;
                 }
                 catch (Exception)
                 {
