@@ -10,4 +10,4 @@ pmkdir "\Flash File Store\SSPB\SRs"
 
 pput -f .\_S2l\IVADCEDrivers.cab.pkg "\Flash File Store\Cab"
 
-prun "\Windows\updatebin.exe" /TopMost "\Flash File Store\Cab\IVADCEDrivers.cab.pkg"
+prun "\Windows\updatebin.exe" "\Flash File Store\Cab\IVADCEDrivers.cab.pkg"
