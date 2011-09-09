@@ -345,17 +345,19 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
 //                addLog("IntermecScanControl Dispose(): Calling CancelRead(true)...");
 //                bcr.CancelRead(true);
                 addLog("IntermecScanControl Dispose(): Disposing BarcodeReader...");
-                bcr.ThreadedRead(false);
-                bcr.CancelRead(true);
                 bcr.BarcodeRead -= bcr_BarcodeRead;
+                bcr.BarcodeReadCanceled -= bcr_BarcodeReadCanceled;
+                bcr.BarcodeReadError -= bcr_BarcodeReadError;
                 try
                 {
+                    bcr.NoBarcodeRead -= bcr_NoBarcodeRead;
                     bcr.EnableNoBarcodeReadEvent = false;
                 }
                 catch (Exception)
                 {
                     addLog("Unable to unset bcr.EnableNoBarcodeReadEvent. Old DLL?");
                 }
+                bcr.ThreadedRead(false);
                 bcr.Dispose();
                 bcr = null;
                 addLog("IntermecScanControl Dispose(): BarcodeReader disposed");
