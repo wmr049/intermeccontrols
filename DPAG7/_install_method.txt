@@ -1,6 +1,8 @@
 The installation of the HASCI TestApp and Controls is done using ScanNgo 
 barcodes or by using a SDcard
 
+UPDATE 9.9.2011 for IVADDCE (NullBarcodeRead)
+
 The _S2L dir has all files neccessary for a remote install
 
 _Network connection_
@@ -35,6 +37,37 @@ Just scan the created ScanNgo barcode and watch the magic.
 If the install will not start automatically, you can scan the barcode inside 
 idlpkg_install.tif. This will start updatebin with the downloaded idl package.
 
+############## NEW NullBarcodeReadEvent support START ################
+
+_IVADCE installation_
+
+the IVADCE has to be installed after IDL. I have done a download xml for ScanNgo for IVADCE only:
+hasci_ivadcedrivers.xml. The IVADCE will be downloaded and the install will be started automatically.
+
+To create a ScanNgo barcode for the IVADCE install, open SmartSystems Console and then select 
+Tools and "Start ScanNgo".
+
+In Step 1 check only "Software Download Location or SmartSystems Folder". Click NEXT.
+
+In the field "Load Software from URL" enter the network location of 
+hasci_dpag.xml, for example "ftp://192.168.128.5/s2l/dpag/hasci_ivadcedrivers.xml". Click NEXT.
+[if you need to change the server address of the files, you have to change all 
+references inside hasci_ivadcedrivers.xml too!]
+
+Enter a note withon the Notes field, check PDF417 barcode type and select 
+"No Start Barcode" and "No Reboot".
+
+Print the barcode. Optionally save the barcode print page as PDF for later use. 
+Click CLOSE.
+
+Just scan the created ScanNgo barcode and watch the magic.
+
+If the install will not start automatically, use fileexplorer on device and locate
+IVADCEDrivers.cab.pkg in \Flash File Store\Cab. Just tap the file and the update is 
+ready to start.
+
+############## NEW NullBarcodeReadEvent support END ################
+
 _App installation_
 
 To create a ScanNgo barcode, open SmartSystems Console and then select 
@@ -64,10 +97,14 @@ You can use sync_from_S2L_to _setup.bat to sync the files to the setup dir. Then
 manually copy the files below setup dir to the right dirs on a device.
 
 You have to tap/install \flash file store\CAB\IDL.cab.pkg on the device FIRST.
+You have to tap/install \flash file store\CAB\IVADCEDrivers.cab.pkg on the device SECOND.
 
 #ActiveSync install
 
 Then you can use sync_idl_install.bat with an ActiveSync connected device to start
+the install of the IDL.
+
+Then you can use sync_ivadcedrivers_install.bat with an ActiveSync connected device to start
 the install of the IDL.
 
 Use sync_to_FFS.bat to sync the files to FFS of device using an ActiveSync connection and 

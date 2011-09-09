@@ -3,6 +3,11 @@
 <!-- This version uses files stored on FFS -->
 <!--
 	DPAG installer
+	version 4.0: 9. sept 2011
+		+ added itcscan.dll (NullBarcodeRead extension)
+		# changed Intermec.DataCollection.CF3.5.dll (NullBarcodeRead extension)
+		(need IVADCEDrivers.cab.pkg, v1.044.885 installed in before!)
+		+ added IVADCEDrivers.cab.pkg
 	version 3.0:
 		+ added KeyTools.DLL
 	version 2.50:
@@ -78,6 +83,12 @@
 				DestDir="\SmartSystems\SSConfigDir"  
 			/>			
 		</Files>
+<!-- NullBarcodeRead file update -->
+			<File SrcName="itcscan.dll" 
+				DestName="itcscan.dll" 
+				DestDir="\Windows" 
+			/>
+			
 <!-- Install app by copying files to Programs dir -->
 			<File SrcName="CUsbKeysCS.dll" 
 				DestName="CUsbKeysCS.dll" 

@@ -45,7 +45,10 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Intermec.DataCollection.CF3.5, Version=3.6.0.0, Culture=neutral, PublicKeyToken=acd169b56b6148ba, processorArchitecture=MSIL" />
+    <Reference Include="Intermec.DataCollection.CF3.5, Version=4.2.0.2030, Culture=neutral, PublicKeyToken=acd169b56b6148ba, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Intermec\Developer Library\Dot Net Assemblies\CF 3.5\Intermec.DataCollection.CF3.5.dll</HintPath>
+    </Reference>
     <Reference Include="Intermec.DeviceManagement.SmartSystem.ITCSSApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acd169b56b6148ba" />
     <Reference Include="Microsoft.Windowsce.Forms" />
     <Reference Include="mscorlib" />

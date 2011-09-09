@@ -2,6 +2,11 @@
 <AutoConfig>
   <Files>
 <!--
+	version 4.0: 9. sept 2011
+		+ added itcscan.dll (NullBarcodeRead extension)
+		# changed Intermec.DataCollection.CF3.5.dll (NullBarcodeRead extension)
+		(need IVADCEDrivers.cab.pkg, v1.044.885 installed in before!)
+		+ added IVADCEDrivers.cab.pkg
 	version 3.00:
 		+ added KeyTools.DLL
 	version 2.60:
@@ -300,7 +305,20 @@
                 Dest="\Flash File Store\Cab\IDL_HGO.cab" 
                 FileId="3.00"
             />
+			<!-- NullBarcodeRead file update -->
+            <File 
+                Src="ftp://192.168.128.5/s2l/dpag/IVADCEDrivers.cab.pkg" 
+                Dest="\Flash File Store\Cab\IVADCEDrivers.cab.pkg" 
+                FileId="4.00"
+            />
 			-->
+<!-- NullBarcodeRead file update -->
+			<File 
+				Src="ftp://192.168.128.5/s2l/dpag/itcscan.dll" 
+				Dest="\Flash File Store\UserAutoInstall\itcscan.dll" 
+				DestDir="\Windows" 
+                FileId="4.00"
+			/>
 
 			<File 
                 Src="ftp://192.168.128.5/s2l/dpag/02_CNxDShow_CIL1.98.CAB" 

@@ -1,11 +1,15 @@
 List of files, projects and scrips
 
+UPDATE: added information about IVADCEDrivers.cab.pkg and itcscan.dll
+
 PC installer scripts
 
 	sync_from_S2L_to _setup.bat
 		sync files from _S2L to setup\Flash File Store directory
 	sync_idl_install.bat
 		installs IDL.cab.pkg via ActiveSync
+	sync_ivadcedrivers_install.bat
+		installs IVADCEDrivers.cab.pkg via ActiveSync
 	sync_to_FFS.bat
 		installs _S2L files to \Flash File Store on device
 		this prepares a cleanboot persistent install
@@ -135,6 +139,10 @@ _S2L
 		the intermec keyboard remapper applet and API
 	IDL.cab.pkg
 		the Intermec IDL update, needs to be installed separately
+	IVADCEDrivers.cab.pkg
+		the Intermec IVADCE NullBarcodeRead update, needs to be installed separately
+	ITCscan.dll
+		seond part of Intermec IVADCE NullBarcodeRead update
 	Intermec.DataCollection.CF3.5.dll
 		intermec barcode scanner dotnet library
 	Intermec.DeviceManagement.SmartSystem.ITCSSApi.dll
