@@ -1,4 +1,5 @@
 REM sync_to_S2L.bat
+REM version 4.1: added BootSettings.xml
 REM version 4.0: added IVADCEDrivers.cab.pkg and ITCScan.DLL
 REM version 2.5: added mkdir to create dirs
 REM version 2.4: added ITC_KeybdClick.cab
@@ -28,6 +29,7 @@ REM ########### Config Files ###########
 copy .\_S2l\barcodetypes.xml ".\setup\Flash File Store\UserAutoInstall"
 copy .\_S2l\WiFiRadioOFF.xml ".\setup\Flash File Store\UserAutoInstall"
 copy .\_S2l\WWAN_OFF.xml ".\setup\Flash File Store\UserAutoInstall"
+copy .\_S2l\BootSettings.xml ".\setup\Flash File Store\UserAutoInstall"
 
 REM ########## Keyboard Stuff #########
 copy .\_S2l\ck70_largeAlpha.xml ".\setup\Flash File Store\UserAutoInstall"

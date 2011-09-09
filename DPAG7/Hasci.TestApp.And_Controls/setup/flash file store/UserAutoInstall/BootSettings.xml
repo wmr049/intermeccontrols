@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DevInfo Action="Set" Persist="true">
+	<Subsystem Name="Data Collection">
+		<Group Name="Scanners" Instance="0">
+			<Group Name="Symbologies">
+				<Group Name="Interleaved 2 of 5">
+					<Field Name="Enable I 2 of 5">1</Field>
+				</Group>
+				<Group Name="UPC/EAN">
+					<Field Name="Enable EAN 8">1</Field>
+				</Group>
+				<Group Name="UPC/EAN">
+					<Field Name="Enable EAN 13">1</Field>
+				</Group>
+				<Group Name="Code 39">
+					<Field Name="Enable Code 39">1</Field>
+				</Group>
+				<Group Name="Code 128">
+					<Field Name="Enable Code 128">1</Field>
+				</Group>
+				<Group Name="QR Code">
+					<Field Name="Enable QR Code">1</Field>
+				</Group>
+				<Group Name="DataMatrix">
+					<Field Name="Enable DataMatrix">1</Field>
+				</Group>
+				<Group Name="PDF417">
+					<Field Name="Enable PDF417">1</Field>
+				</Group>
+				<Group Name="Code 2 of 5">
+					<Field Name="Enable Code 2 of 5">1</Field>
+				</Group>
+				<Group Name="Code 93">
+					<Field Name="Enable Code 93">1</Field>
+				</Group>
+			</Group><!-- symbologies -->
+			<Group Name="Decode Security">
+				<Field Name="Center Decoding">1</Field>
+				<Group Name="Decode Security">
+					<Field Name="Center Decoding">1</Field>
+					<Field Name="Center Decoding Tolerance">20</Field> 
+				</Group>
+			</Group>
+			<Group Name="Imager Settings">
+				<Group Name="General">
+					<Group Name="Custom">
+						<Field Name="Damaged 1D codes">1</Field>
+					</Group>
+				</Group>
+			</Group>
+		</Group>
+	</Subsystem>
+	<Subsystem Name="Device Settings">
+		<Group Name="Backlight">
+			<Field Name="Keypad backlight">2</Field>
+		</Group>
+		<Group Name="Power Management">
+			<Group Name="Battery Power">
+				<Field Name="Device turns off after">5</Field>
+				<Field Name="Screen turns off after">0</Field>
+			</Group>
+			<Group Name="External Power">
+				<Field Name="Device turns off after">0</Field>
+				<Field Name="Screen turns off after">0</Field>
+			</Group>
+			<Group Name="Power Button">
+			<!-- PowerButton does suspend -->
+			<Field Name="Power button default">2</Field> 
+			<!-- PowerButtonScreen Disabled -->
+				<Group Name="Power Button Screen">
+					<Field Name="Enable power button screen">0</Field> 
+					<Group Name="Power Button Screen Options">
+						<Field Name="Screen off">0</Field>
+						<Field Name="Hibernate">1</Field>
+						<Field Name="Suspend">1</Field>
+						<Field Name="Reboot">1</Field>
+						<Field Name="Shutdown">1</Field>
+					</Group>
+				</Group>
+			</Group>
+		</Group>
+	</Subsystem>
+	<Subsystem Name="Communications">
+		<Group Name="802.11 Radio">
+			<Field Name="Radio Enabled">0</Field>
+		</Group>
+	</Subsystem>
+	<Subsystem Name="WWAN Radio">
+		<Group Name="Manage Radio State">
+			<Field Name="Radio Power State">0</Field> 
+		</Group>
+	</Subsystem>
+</DevInfo>

@@ -1,4 +1,5 @@
 REM sync_to_FFS.bat
+REM version 4.1: added BootSettings.xml
 REM version 4.0: added IVADCEDrivers.cab.pkg and ITCScan.DLL
 REM version 2.5: added ITC_KeybdClick.cab
 REM version 2.4: added keymap xmls
@@ -16,6 +17,7 @@ pmkdir "\Flash File Store\UserAutoInstall"
 pmkdir "\Flash File Store\Cab"
 pmkdir "\Flash File Store\SSPB"
 pmkdir "\Flash File Store\SSPB\SRs"
+pmkdir "\SmartSystems"
 
 pput -f .\_S2l\SR11071900_MSC_Cx70WM65_ALL.CAB "\Flash File Store\SSPB\SRs"
 
@@ -67,6 +69,7 @@ pput -f .\_S2l\barcodetypes.xml "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\itcRebootDevice.exe "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\WiFiRadioOFF.xml "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\WWAN_OFF.xml "\Flash File Store\UserAutoInstall"
+pput -f .\_S2l\BootSettings.xml "\Flash File Store\UserAutoInstall"
 
 REM ############# Installers ##############
 REM pput -f .\_S2l\IDL_HGO.cab "\Flash File Store\Cab"
