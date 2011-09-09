@@ -3,6 +3,9 @@
 <!-- This version uses files stored on FFS -->
 <!--
 	DPAG installer
+	version 4.1:
+		+ added BootSettings.xml with Barcode/WLAN/WWAN settings to copy
+		+ added BootSettings reg changes
 	version 4.0: 9. sept 2011
 		+ added itcscan.dll (NullBarcodeRead extension)
 		# changed Intermec.DataCollection.CF3.5.dll (NullBarcodeRead extension)
@@ -66,6 +69,12 @@
 		<!-- <Chain Dir="\SD Card\SSPB" /> -->
 		<!-- <SetRegKey KeyName="Software\Intermec\Devmgmt\SSTransferAgent" ValueName="PostBootFileLocation" Value="\SD Card\SSPB" /> -->
 
+		<SetRegKey 
+			KeyName="Software\Intermec\SSClient" 
+			ValueName="BootSettings"
+			Value="1" 
+			Type="DWORD"
+		/> 
 	</Commands>   
 
 		<Files SrcDir="\Flash File Store\UserAutoInstall">
@@ -82,6 +91,10 @@
 				DestName="WWAN_OFF.xml" 
 				DestDir="\SmartSystems\SSConfigDir"  
 			/>			
+			<File SrcName="BootSettings.xml" 
+				DestName="BootSettings.xml" 
+				DestDir="\SmartSystems"  
+			/>
 		</Files>
 <!-- NullBarcodeRead file update -->
 			<File SrcName="itcscan.dll" 
@@ -273,12 +286,6 @@
 <!-- REBOOT 
 			<File SrcName="" DestName="itcRebootDevice.exe" DestDir="\Flash File Store\UserAutoInstall" Run="true"  WAIT="true" CmdLine="" />
 -->        
-<!-- BootSettings exmaple copy
-	<Files  SrcDir="\Flash File Store\UserAutoInstall"> 
-      <File SrcName="BootSettings.xml" DestName="BootSettings.xml“ DestDir="\SmartSystems" /> 
-    </Files> 
---> 
-
     </Device>
 
 </Devices>
