@@ -1,4 +1,5 @@
 REM sync_to_FFS.bat
+REM version 4.0: added IVADCEDrivers.cab.pkg and ITCScan.DLL
 REM version 2.5: added ITC_KeybdClick.cab
 REM version 2.4: added keymap xmls
 REM version 2.3: added SR11071900_MSC_Cx70WM65_ALL.CAB
@@ -18,8 +19,9 @@ pmkdir "\Flash File Store\SSPB\SRs"
 
 pput -f .\_S2l\SR11071900_MSC_Cx70WM65_ALL.CAB "\Flash File Store\SSPB\SRs"
 
+pput -f .\_S2l\ITCscan.dll "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\CUsbKeysCS.dll "\Flash File Store\UserAutoInstall"
-pput -f .\_S2l\DPAG_TestApp.exe "\Flash File Store\UserAutoInstall"
+REM pput -f .\_S2l\DPAG_TestApp.exe "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\Hasci.TestApp.exe "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\IntermecTestApp.exe "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\SigCapDP2.exe "\Flash File Store\UserAutoInstall"
@@ -69,6 +71,7 @@ pput -f .\_S2l\WWAN_OFF.xml "\Flash File Store\UserAutoInstall"
 REM ############# Installers ##############
 REM pput -f .\_S2l\IDL_HGO.cab "\Flash File Store\Cab"
 pput -f .\_S2l\IDL.cab.pkg "\Flash File Store\Cab"
+pput -f .\_S2l\IVADCEDrivers.cab.pkg "\Flash File Store\Cab"
 pput -f .\_S2l\02_CNxDShow_CIL1.98.CAB "\Flash File Store\Cab"
 pput -f .\_S2l\03_KBDTools.CAB "\Flash File Store\Cab"
 pput -f .\_S2l\05_itc50.dll_Field_Trial.cab "\Flash File Store\Cab"

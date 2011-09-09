@@ -1,0 +1,5 @@
+REGEDIT4
+
+;Set registry with "HKLM\ Software\\Intermec\\ADCPorts\1\ SendNullDataBarcode = 1 (DWORD)" 
+[HKEY_LOCAL_MACHINE\Software\Intermec\ADCPorts\1]
+"SendNullDataBarcode"=dword:00000001

@@ -1,4 +1,5 @@
 REM sync_to_S2L.bat
+REM version 4.0: added IVADCEDrivers.cab.pkg and ITCScan.DLL
 REM version 2.5: added mkdir to create dirs
 REM version 2.4: added ITC_KeybdClick.cab
 REM version 2.3: added separate keymap xmls as one does not work
@@ -43,6 +44,7 @@ copy .\_S2l\02_CNxDShow_CIL1.98.CAB ".\setup\Flash File Store\Cab"
 copy .\_S2l\03_KBDTools.CAB ".\setup\Flash File Store\Cab"
 copy .\_S2l\05_itc50.dll_Field_Trial.cab ".\setup\Flash File Store\Cab"
 copy .\_S2l\IDL.cab.pkg ".\setup\Flash File Store\Cab"
+copy .\_S2l\IVADCEDrivers.cab.pkg ".\setup\Flash File Store\Cab"
 copy .\_S2l\ITC_KeybdClick.cab ".\setup\Flash File Store\Cab"
 
 REM ########## EXECUTABLES #############
@@ -53,6 +55,7 @@ copy .\_S2l\SigCapDP2.exe ".\setup\Flash File Store\UserAutoInstall"
 copy .\_S2l\IntermecTestApp.exe ".\setup\Flash File Store\UserAutoInstall"
 
 REM ########## RUNTIMES #############
+copy .\_S2l\itcscan.dll ".\setup\Flash File Store\UserAutoInstall"
 copy .\_S2l\Hasci.TestApp.DeviceControlContracts.dll ".\setup\Flash File Store\UserAutoInstall"
 copy .\_S2l\Hasci.TestApp.IntermecBarcodeScanControls.dll ".\setup\Flash File Store\UserAutoInstall"
 copy .\_S2l\Hasci.TestApp.IntermecImagerControls2.dll ".\setup\Flash File Store\UserAutoInstall"
