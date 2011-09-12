@@ -3,6 +3,9 @@
 <!-- This version uses files stored on FFS -->
 <!--
 	DPAG installer
+
+	version 4.2:
+		+ added SendNullDataBarcode reg change
 	version 4.1:
 		+ added BootSettings.xml with Barcode/WLAN/WWAN settings to copy
 		+ added BootSettings reg changes
@@ -72,6 +75,12 @@
 		<SetRegKey 
 			KeyName="Software\Intermec\SSClient" 
 			ValueName="BootSettings"
+			Value="1" 
+			Type="DWORD"
+		/> 
+		<SetRegKey 
+			KeyName="Software\Intermec\ADCPorts\1" 
+			ValueName="SendNullDataBarcode"
 			Value="1" 
 			Type="DWORD"
 		/> 

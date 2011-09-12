@@ -69,6 +69,8 @@ _S2L
 		Intermec Imager control
 	Hasci.TestApp.IntermecSignatureControls.dll
 		Intermec onscreen signature control
+	keytools.dll
+		runtime for keyboard 
 	KeyMapImport.exe
 		tool to import exported keyboard remapper files
 	ck70_largeAlpha.xml

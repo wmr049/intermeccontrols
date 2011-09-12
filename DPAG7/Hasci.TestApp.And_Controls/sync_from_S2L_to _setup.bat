@@ -1,4 +1,6 @@
 REM sync_to_S2L.bat
+REM	version 4.3: changed to NOT autoinstall SR
+REM version 4.2: added keytools.dll
 REM version 4.1: added BootSettings.xml
 REM version 4.0: added IVADCEDrivers.cab.pkg and ITCScan.DLL
 REM version 2.5: added mkdir to create dirs
@@ -20,7 +22,7 @@ mkdir ".\setup\Flash File Store\Cab"
 mkdir ".\setup\Flash File Store\SSPB"
 mkdir ".\setup\Flash File Store\SSPB\SRs"
 
-copy .\_S2l\SR11071900_MSC_Cx70WM65_ALL.CAB ".\setup\Flash File Store\SSPB\SRs"
+copy .\_S2l\SR11071900_MSC_Cx70WM65_ALL.CAB ".\setup\Flash File Store"
 
 REM ########## _sstransferagent ###########
 copy .\_S2l\_sstransferagent.xml ".\setup\Flash File Store\UserAutoInstall"
@@ -40,6 +42,7 @@ copy .\_S2l\cn70e_alpha.xml ".\setup\Flash File Store\UserAutoInstall"
 copy .\_S2l\cn70e_num.xml ".\setup\Flash File Store\UserAutoInstall"
 REM copy .\_S2l\Cx70_keymaps.xml ".\setup\Flash File Store\UserAutoInstall"
 copy .\_S2l\KeyMapImport.exe ".\setup\Flash File Store\UserAutoInstall"
+copy .\_S2l\keytools.dll ".\setup\Flash File Store\UserAutoInstall"
 
 REM ########### CAB files ##############
 copy .\_S2l\02_CNxDShow_CIL1.98.CAB ".\setup\Flash File Store\Cab"

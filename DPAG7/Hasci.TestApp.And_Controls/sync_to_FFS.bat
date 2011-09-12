@@ -1,4 +1,7 @@
 REM sync_to_FFS.bat
+REM 4.4: removed CleanBoot stuff
+REM version 4.3: changed to NOT autoinstall SR
+REM version 4.2: added keytools.dll
 REM version 4.1: added BootSettings.xml
 REM version 4.0: added IVADCEDrivers.cab.pkg and ITCScan.DLL
 REM version 2.5: added ITC_KeybdClick.cab
@@ -19,7 +22,7 @@ pmkdir "\Flash File Store\SSPB"
 pmkdir "\Flash File Store\SSPB\SRs"
 pmkdir "\SmartSystems"
 
-pput -f .\_S2l\SR11071900_MSC_Cx70WM65_ALL.CAB "\Flash File Store\SSPB\SRs"
+pput -f .\_S2l\SR11071900_MSC_Cx70WM65_ALL.CAB "\Flash File Store"
 
 pput -f .\_S2l\ITCscan.dll "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\CUsbKeysCS.dll "\Flash File Store\UserAutoInstall"
@@ -29,6 +32,7 @@ pput -f .\_S2l\IntermecTestApp.exe "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\SigCapDP2.exe "\Flash File Store\UserAutoInstall"
 
 pput -f .\_S2l\KeymapImport.exe "\Flash File Store\UserAutoInstall"
+pput -f .\_S2l\keytools.dll "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\Cx70_keymaps.xml "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\ck70_largeAlpha.xml "\Flash File Store\UserAutoInstall"
 pput -f .\_S2l\ck70_num.xml "\Flash File Store\UserAutoInstall"
@@ -80,6 +84,6 @@ pput -f .\_S2l\03_KBDTools.CAB "\Flash File Store\Cab"
 pput -f .\_S2l\05_itc50.dll_Field_Trial.cab "\Flash File Store\Cab"
 pput -f .\_S2l\ITC_KeybdClick.cab "\Flash File Store\Cab"
 
-PAUSE !!!!!!!!!!!!! CleanBOOT now? !!!!! Ctrl-C to STOP !!!!!!!!!!!!!!
-pput -f .\_S2l\CleanBootCmd.exe "\Flash File Store"
-prun "\Flash file store\CleanbootCmd.exe" -CleanBoot
+rem PAUSE !!!!!!!!!!!!! CleanBOOT now? !!!!! Ctrl-C to STOP !!!!!!!!!!!!!!
+rem pput -f .\_S2l\CleanBootCmd.exe "\Flash File Store"
+rem prun "\Flash file store\CleanbootCmd.exe" -CleanBoot
