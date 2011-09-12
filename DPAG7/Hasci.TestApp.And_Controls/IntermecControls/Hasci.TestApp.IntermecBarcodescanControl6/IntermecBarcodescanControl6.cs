@@ -130,7 +130,12 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
                 bcr = new BarcodeReader(this, "default");// ();
                 try
                 {
+#if NoBarcodeRead
+                    //modded code for new NoBarcodeRead feature
+                    bcr.NoBarcodeRead += new NoBarcodeReadEventHandler(bcr_NoBarcodeRead);
                     bcr.EnableNoBarcodeReadEvent = true;
+                    addLog("Setting bcr.EnableNoBarcodeReadEvent. OK?");
+#endif
                 }
                 catch (Exception)
                 {
@@ -138,10 +143,6 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
                 }
                 addLog("IntermecBarcodescanControl5: BarcodeReader adding event handlers...");
                 bcr.BarcodeRead += new BarcodeReadEventHandler(bcr_BarcodeRead);
-#if NoBarcodeRead
-                //modded code for new NoBarcodeRead feature
-                bcr.NoBarcodeRead += new NoBarcodeReadEventHandler(bcr_NoBarcodeRead);
-#endif
                 bcr.BarcodeReadCanceled += new BarcodeReadCancelEventHandler(bcr_BarcodeReadCanceled);
                 bcr.BarcodeReadError += new BarcodeReadErrorEventHandler(bcr_BarcodeReadError);
                 addLog("IntermecBarcodescanControl5: enabling Scanner...");

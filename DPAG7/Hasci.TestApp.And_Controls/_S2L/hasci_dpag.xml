@@ -2,6 +2,9 @@
 <AutoConfig>
   <Files>
 <!--
+	version 4.1: 
+		changed to NOT copy SR to SRs folder, for NullBarcodeRead support
+		the SR has to be installed BEFORE IVADCEDrivers.cab.pkg
 	version 4.0: 9. sept 2011
 		+ added itcscan.dll (NullBarcodeRead extension)
 		# changed Intermec.DataCollection.CF3.5.dll (NullBarcodeRead extension)
@@ -50,7 +53,7 @@
 <!-- ServiceRelease -->
             <File 
                 Src="ftp://192.168.128.5/s2l/dpag/SR11071900_MSC_Cx70WM65_ALL.CAB" 
-                Dest="\Flash File Store\SSPB\SRs\SR11071900_MSC_Cx70WM65_ALL.CAB"
+                Dest="\Flash File Store\SR11071900_MSC_Cx70WM65_ALL.CAB"
                 FileId="3.00"
             />
 <!-- CONFIG -->            

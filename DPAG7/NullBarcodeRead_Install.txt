@@ -1,0 +1,41 @@
+Josef
+
+Attached are updated files:
+
+1. With THIS attached DCE's pkg file, you do not need do the steps that Jeff indicated before. You can just install this pkg on top whatever you have on your device. 
+2. You do not need set the registry. The BarcodeReader.cs includes a "EnableNoBarcodeReadEvent" property. When EnableNoBarcodeReadEvent is true, the NoBarcodeRead event is triggered if no barcode is read with scan button released. 
+3. Use the updated itcscan.dll.
+
+Notes:
+There is landscape video  issue with Camera. DCE will have a another updated pkg file by tomorrow morning. 
+
+Thanks,
+Bo
+
+-----Original Message-----
+From: Gode, Heinz-Josef 
+Sent: Thursday, September 08, 2011 1:13 PM
+To: Hunt, Jeff; Shang, Bo
+Cc: Ramberg, Jon; Dean, Stephen
+Subject: RE: Trigger modes
+
+Thanks for the clarification, Jeff
+
+it is now past 22:00 and hopefully have a usabble release (incl. camera) when I start my working day tomorrow.
+
+Thanks so far
+
+Josef
+________________________________________
+From: Hunt, Jeff
+Sent: Thursday, September 08, 2011 5:53 PM
+To: Gode, Heinz-Josef; Shang, Bo
+Cc: Barthen, Hans-Juergen; Schiffer, Christian; Ramberg, Jon; Dean, Stephen
+Subject: RE: Trigger modes
+
+Almost.  The steps are:
+1. Reflash OS 1.30.14.0045
+2. Install SR11071900_MSC_Cx70WM65_ALL.CAB.
+3. Install ICADCEDrivers.cab.pkg.  This will cause a reboot.
+4a. Change DPAG app to enable NoBarcodeRead property;  OR 4b. Set registry key SendNullDataBarcode=DWORD:1 4 and reboot.
+5. Install DPAG app and IDL runtimes.

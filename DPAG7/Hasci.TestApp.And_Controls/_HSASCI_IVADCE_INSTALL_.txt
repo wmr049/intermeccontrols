@@ -1,0 +1,19 @@
+Installation der aktuellen Hasc.TestApp inklusive IVADCE (NullBarcodeRead) Installation
+
+1. Das Verzeichnis "\Flash File Store" auf dem Gerät leeren
+2. die Batch-Datei sync_to_FFS.bat ausführen, damit werden alle Programmdateien Cleanboot-fest
+   kopiert
+3. Mit dem Datei-Explorer auf dem Gerät die Datei "\Flash File Store\SR11071900_MSC_Cx70WM65_ALL.CAB"
+   suchen und zur Installation antippen. Diese Datei MUSS (wenn überhaupt) vor IVADCEDrivers.cab.pkg
+   installiert werden.
+4. Nach einem Neustart wird die Hasci.TesApp schon installiert und nach einem weiteren Warmboot gestartet
+5. Hasci.TestApp im Hauptmenü durch Eingabe von "b99" verlassen
+6. Mit dem Datei-Explorer die Datei "\Flash File Store\Cab\IVADCEDrivers.cab.pkg" suchen und zur Installation 
+   antippen. Die Installation startet nachdem Sie der Installation zugestimmt haben nach einem weiteren Neustart.
+   Nach der Installation startet auch die Hasci.TestApp wieder und legt sich vor den Bestätigungsbildschirm der
+   IVADCEDriver-Installation.
+7. Beenden Sie Hasci.TestApp wieder mit "b99" im Hauptmenü.
+8. Bestätigen Sie die IVADCEDriver-Installation durch Antippen von (Done)
+9. Starten Sie entweder das Gerät erneut über den Reset-Taster im Batteriefach oder starten Sie Hasci.TestApp
+   über das entsprechende Symbol im Startmenü des Gerätes.
+   
