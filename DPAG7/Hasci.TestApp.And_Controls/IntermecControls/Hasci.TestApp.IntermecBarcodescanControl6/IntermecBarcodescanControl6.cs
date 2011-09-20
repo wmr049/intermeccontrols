@@ -43,6 +43,8 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
     
      * * The new DCE will fire the BarcodeReadEvent with BarcodeData="" (empty string) for 'canceled' (bad) barcode reads
      * a 'bad' read is where a Datacollection Session has been started and ended without a barcode read in between
+     * 
+     * 20.sept 2011 re-added mapAllSide2SCAN()
     */
     /// <summary>
     /// This is the Intermec Barcode Reader Control for MEF
@@ -113,9 +115,10 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
                 //change number of good read beeps to zero
                 YetAnotherHelperClass.setNumberOfGoodReadBeeps(0);
                 addLog("IntermecBarcodescanControl5: mapKey()...");
+                ITCTools.KeyBoard.mapKey();
                 //we use the standard scan key assignement:
-                addLog("IntermecBarcodescanControl5: restoreScanKeyDefault()...");
-                ITCTools.KeyBoard.restoreScanKeyDefault();
+                //addLog("IntermecBarcodescanControl5: restoreScanKeyDefault()...");
+                //ITCTools.KeyBoard.restoreScanKeyDefault();
             }
             catch (Exception ex)
             {
@@ -124,7 +127,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
             try
             {
                 //Cannot use Keydown etc within a usercontrol, we will not get the events!!!!!
-                ITCTools.KeyBoard.createMultiKey2Events();
+                //ITCTools.KeyBoard.createMultiKey2Events();
                 addLog("IntermecBarcodescanControl5: new BarcodeReader()...");
                 //create a new BarcodeReader instance
                 bcr = new BarcodeReader(this, "default");// ();
