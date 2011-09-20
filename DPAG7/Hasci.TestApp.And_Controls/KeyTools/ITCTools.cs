@@ -208,6 +208,7 @@ namespace ITCTools
         }
         /// <summary>
         /// change the event names of scanbutton to StateLeftScan1 and DeltaLeftScan1
+        /// will also map all side buttons to scan
         /// </summary>
         public static void mapKey()
         {
