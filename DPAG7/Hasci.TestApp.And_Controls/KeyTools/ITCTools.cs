@@ -366,6 +366,72 @@ namespace ITCTools
             }
             _cusbKeys.writeKeyTables();
         }
+        /// <summary>
+        /// read the scanbutton mapping and apply "Event Name 1" to all side buttons
+        /// </summary>
+        public static void mapAllSide2SCAN_Event1()
+        {
+            //init the class
+            ITC_KEYBOARD.CUSBkeys _cusbKeys = new ITC_KEYBOARD.CUSBkeys();
+
+            //struct to hold key definition
+            CUSBkeys.usbKeyStruct usbKey = new CUSBkeys.usbKeyStruct();
+
+            //NORMAL Plane = 0x00
+            //orange plane = 0x01
+            //green/aqua plane = 0x02
+            int iCount = _cusbKeys.getNumPlanes();
+
+            //struct to hold key definition
+            CUSBkeys.usbKeyStruct usbScanKey = new CUSBkeys.usbKeyStruct();
+            //get main scan button 
+            //int iIndex = _cusbKeys.getKeyIndex(0, (int)ITC_KEYBOARD.CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1 /*0x90*/);
+            _cusbKeys.getKeyStruct(0, CUsbKeyTypes.HWkeys.SCAN_Button_KeyLang1, ref usbScanKey);
+
+            //make a normal scan button
+            usbScanKey.bFlagHigh = CUsbKeyTypes.usbFlagsHigh.NoFlag;
+            usbScanKey.bFlagMid = CUsbKeyTypes.usbFlagsMid.NoRepeat | CUsbKeyTypes.usbFlagsMid.Silent;
+            usbScanKey.bFlagLow = CUsbKeyTypes.usbFlagsLow.NamedEventIndex;
+            usbScanKey.bIntScan = 1; //map to Delta/State-LeftScan Event 1
+
+            for (int iPlane = 0; iPlane < iCount; iPlane++) //do for all planes
+            {
+                //remap F6 to SCAN
+                _cusbKeys.getKeyStruct(iPlane, ITC_KEYBOARD.CUsbKeyTypes.HWkeys.F6_VOL_UP, ref usbKey);
+                usbKey.bFlagHigh = usbScanKey.bFlagHigh;
+                usbKey.bFlagMid = usbScanKey.bFlagMid;
+                usbKey.bFlagLow = usbScanKey.bFlagLow;
+                usbKey.bIntScan = usbScanKey.bIntScan;
+                _cusbKeys.setKey(iPlane, CUsbKeyTypes.HWkeys.F6_VOL_UP, usbKey);
+
+                // F7
+                _cusbKeys.getKeyStruct(iPlane, ITC_KEYBOARD.CUsbKeyTypes.HWkeys.F7_VOL_DN, ref usbKey);
+                usbKey.bFlagHigh = usbScanKey.bFlagHigh;
+                usbKey.bFlagMid = usbScanKey.bFlagMid;
+                usbKey.bFlagLow = usbScanKey.bFlagLow;
+                usbKey.bIntScan = usbScanKey.bIntScan;
+                _cusbKeys.setKey(iPlane, CUsbKeyTypes.HWkeys.F7_VOL_DN, usbKey);
+
+                //Side Scan button: dec145, 0x91
+                _cusbKeys.getKeyStruct(iPlane, 0x91, ref usbKey);
+                usbKey.bFlagHigh = usbScanKey.bFlagHigh;
+                usbKey.bFlagMid = usbScanKey.bFlagMid;
+                usbKey.bFlagLow = usbScanKey.bFlagLow;
+                usbKey.bIntScan = usbScanKey.bIntScan;
+                _cusbKeys.setKey(iPlane, 0x91, usbKey);
+
+                //APP key: dec67, 0x43
+                _cusbKeys.getKeyStruct(iPlane, 0x43, ref usbKey);
+                usbKey.bFlagHigh = usbScanKey.bFlagHigh;
+                usbKey.bFlagMid = usbScanKey.bFlagMid;
+                usbKey.bFlagLow = usbScanKey.bFlagLow;
+                usbKey.bIntScan = usbScanKey.bIntScan;
+                _cusbKeys.setKey(iPlane, 0x43, usbKey);
+
+            }
+            _cusbKeys.writeKeyTables();
+        }
+
         private static void mapAllSide2NOOP()
         {
             //init the class

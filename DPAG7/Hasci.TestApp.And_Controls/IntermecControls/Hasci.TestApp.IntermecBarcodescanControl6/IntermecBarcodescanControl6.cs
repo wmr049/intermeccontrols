@@ -114,11 +114,14 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
                 YetAnotherHelperClass.setHWTrigger(true);
                 //change number of good read beeps to zero
                 YetAnotherHelperClass.setNumberOfGoodReadBeeps(0);
-                addLog("IntermecBarcodescanControl5: mapKey()...");
-                ITCTools.KeyBoard.mapKey();
+                //as with new NullBarcodeRead events, we do not need to remap to StateLeftScan2 !
+                //addLog("IntermecBarcodescanControl5: mapKey()...");
+                //ITCTools.KeyBoard.mapKey();
                 //we use the standard scan key assignement:
-                //addLog("IntermecBarcodescanControl5: restoreScanKeyDefault()...");
-                //ITCTools.KeyBoard.restoreScanKeyDefault();
+                addLog("IntermecBarcodescanControl5: restoreScanKeyDefault()...");
+                ITCTools.KeyBoard.restoreScanKeyDefault();
+                addLog("IntermecBarcodescanControl5: mapAllSide2SCAN_Event1() (all side buttons to scan event 1)...");
+                ITCTools.KeyBoard.mapAllSide2SCAN_Event1();
             }
             catch (Exception ex)
             {
@@ -378,6 +381,7 @@ namespace Hasci.TestApp.IntermecBarcodeScanControls6
             {
                 addLog("IntermecScanControl Dispose(), Exception: enabling HardwareTrigger: "+ex.Message);
             }
+
             addLog("IntermecScanControl Dispose(): restoring Scan Button Key...");
             ITCTools.KeyBoard.restoreKey();
             addLog("...IntermecScanControl Dispose(): end.");
