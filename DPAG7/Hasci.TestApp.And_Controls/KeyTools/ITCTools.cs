@@ -3,10 +3,54 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
+using Microsoft.Win32;
+
 using ITC_KEYBOARD;
 
 namespace ITCTools
 {
+    public static class registrySettings
+    {
+        public enum CameraRes{
+            low=0,
+            med=1,
+            high=2
+        }
+        public static CameraRes cameraResolution
+        {
+            get
+            {
+                CameraRes cRes = CameraRes.med;
+                try
+                {
+                    int iRes = (int)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\HasciTestApp", "SnapRes", 2);
+                    cRes = (CameraRes)iRes;
+                }
+                catch (Exception)
+                {
+                    //could not read reg value                    
+                }
+                return cRes;
+            }
+        }
+        public static CameraRes previewResolution
+        {
+            get
+            {
+                CameraRes cRes = CameraRes.med;
+                try
+                {
+                    int iRes = (int)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\HasciTestApp", "PreviewRes", 1);
+                    cRes = (CameraRes)iRes;
+                }
+                catch (Exception)
+                {
+                    //could not read reg value                    
+                }
+                return cRes;
+            }
+        }
+    }
     public static class KeyBoard
     {
         /// <summary>
@@ -431,7 +475,7 @@ namespace ITCTools
             }
             _cusbKeys.writeKeyTables();
         }
-
+        
         private static void mapAllSide2NOOP()
         {
             //init the class

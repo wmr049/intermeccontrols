@@ -226,7 +226,7 @@ namespace Hasci.TestApp.IntermecImagerControls2
         void IntermecImagerControl2_OnImagerSnapshot(IntermecImagerControl2.ImagerSnapshotEventArgs snArgs)
         {
             addLog("IntermecCamera_SnapshotEvent entered...");
-            Cursor.Current = System.Windows.Forms.Cursors.Default;
+            Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
             if (snArgs.Status == SnapshotStatus.Ok)
             {
                 addLog("SnapshotEvent OK");
@@ -272,7 +272,7 @@ namespace Hasci.TestApp.IntermecImagerControls2
             {
                 //Snapshot not OK
                 System.Diagnostics.Debug.WriteLine("SnapshotEvent not OK: " + snArgs.Status.ToString());
-                Cursor.Current = System.Windows.Forms.Cursors.Default;
+//                Cursor.Current = System.Windows.Forms.Cursors.Default;
 
                 addLog("IntermecImagerControl2_OnImagerSnapshot(): calling ShowSnapShot with false");
                 showSnapshot(false); //IntermecImagerControl2_OnImagerSnapshot
@@ -286,6 +286,7 @@ namespace Hasci.TestApp.IntermecImagerControls2
 #endif
             _bTakingSnapShot = false;
             System.Diagnostics.Debug.WriteLine("...IntermecCamera_SnapshotEvent ended.");
+            Cursor.Current = System.Windows.Forms.Cursors.Default;
         }
 
         /// <summary>
@@ -401,7 +402,7 @@ namespace Hasci.TestApp.IntermecImagerControls2
             }
             bFirstDeltaToggle = !bFirstDeltaToggle; //ready for next toggle
             //############### Take a snapshot ##################
-            Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
+//            Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
 
             addLog("onDeltaScan making snapshot...");
             try
@@ -436,7 +437,7 @@ namespace Hasci.TestApp.IntermecImagerControls2
             {
                 System.Diagnostics.Debug.WriteLine("onDeltaScan: Exception: " + ex.Message);
             }
-            Cursor.Current = Cursors.Default;
+//            Cursor.Current = Cursors.Default;
             Application.DoEvents();
 #if NO_SNAPSHOT_THREAD
             _bLastState = false;//enable OnState processing
@@ -470,6 +471,7 @@ namespace Hasci.TestApp.IntermecImagerControls2
         /// </summary>
         private void DoSnapShot()
         {
+            Cursor.Current = Cursors.WaitCursor;
             addLog("DoSnapShot: Entering SnapShot thread");
             if (_bTakingSnapShot)
             {
@@ -539,6 +541,7 @@ namespace Hasci.TestApp.IntermecImagerControls2
             _bTakingSnapShot = false;
             _bLastState = false; //enable next press and hold action
             addLog("DoSnapShot: has been ended.");
+            Cursor.Current = Cursors.Default;
         }
 
         // Fire thread safe event
