@@ -1,4 +1,4 @@
-#define USE_LOW_RES
+//#define USE_LOW_RES
 #define USEGDI
 //do not switch streaming! see also "ALL THE TIME"
 #define STREAMING_ON
@@ -93,6 +93,8 @@ namespace Hasci.TestApp.IntermecPhotoControls3
         /// </summary>
         private string _sFileTemplate = "FotoKamera";
 
+        private Intermec.Multimedia.Camera.ImageResolutionType cameraRes = Intermec.Multimedia.Camera.ImageResolutionType.Highest;
+        private Intermec.Multimedia.Camera.ImageResolutionType previewRes = Camera.ImageResolutionType.Medium;
         //some stuff needed to watch for the scan button events
         #region scanbutton
         System.Threading.Thread waitThread;
@@ -104,6 +106,11 @@ namespace Hasci.TestApp.IntermecPhotoControls3
         public IntermecCameraControl2()
         {
             InitializeComponent();
+
+            //read res setting for snapshots and preview
+            cameraRes = (Camera.ImageResolutionType)ITCTools.registrySettings.cameraResolution;
+            previewRes = (Camera.ImageResolutionType)ITCTools.registrySettings.previewResolution;
+
             //disable HW Trigger of Scanner
             YetAnotherHelperClass.setHWTrigger(false);
             try
@@ -128,7 +135,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
 #if USE_LOW_RES
                         IntermecCamera = new Camera(CameraPreview, Camera.ImageResolutionType.Lowest);
 #else
-                        IntermecCamera = new Camera(CameraPreview, Camera.ImageResolutionType.Medium);
+                        IntermecCamera = new Camera(CameraPreview, previewRes);// Camera.ImageResolutionType.Medium);
 #endif
                         //IntermecCamera.PictureBoxUpdate = Camera.PictureBoxUpdateType.None;
                         IntermecCamera.PictureBoxUpdate = Camera.PictureBoxUpdateType.Fit; // None;// Fit;// AdjustToFrameSize;
@@ -207,7 +214,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
 #if USE_LOW_RES
                 IntermecCamera.SnapshotFile.ImageResolution = Camera.ImageResolutionType.Lowest;
 #else
-                IntermecCamera.SnapshotFile.ImageResolution = Camera.ImageResolutionType.Medium;
+                IntermecCamera.SnapshotFile.ImageResolution = cameraRes;// Camera.ImageResolutionType.Medium;
 #endif
                 IntermecCamera.SnapshotFile.JPGQuality = 90;
                 IntermecCamera.SnapshotFile.Directory = "\\Temp";
@@ -265,7 +272,10 @@ namespace Hasci.TestApp.IntermecPhotoControls3
         void IntermecCamera_SnapshotEvent(object sender, Camera.SnapshotArgs snArgs)
         {
             addLog("IntermecCamera_SnapshotEvent entered...");
-            Cursor.Current = System.Windows.Forms.Cursors.Default;
+            //Cursor.Current = System.Windows.Forms.Cursors.WaitCursor; 
+            //as the snapshot event is fired on the end of the snapshot is ready, 
+            //we have to set the WaitCursor before starting the snapshot
+
             if (snArgs.Status == Camera.SnapshotStatus.Ok)
             {
                 addLog("SnapshotEvent OK");
@@ -311,7 +321,6 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             {
                 System.Diagnostics.Debug.WriteLine("SnapshotEvent not OK: " + snArgs.Status.ToString());
                 System.Diagnostics.Debug.WriteLine("File: '" + IntermecCamera.SnapshotFile.Directory +"' '"+ IntermecCamera.SnapshotFile.Filename+"'");
-                Cursor.Current = System.Windows.Forms.Cursors.Default;
                 showSnapshot(false); //show preview
             }
 #if STREAMING_ON
@@ -324,6 +333,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             _bInDeltaProcessing = false;
             _bLastState = false; //enable OnState processing
             System.Diagnostics.Debug.WriteLine("...IntermecCamera_SnapshotEvent ended.");
+            Cursor.Current = Cursors.Default; //snapshot event
         }
 
 #if USEGDI
@@ -551,7 +561,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
 
             ITCTools.KeyBoard.restoreKey();
 
-            Cursor.Current = Cursors.Default;
+            Cursor.Current = Cursors.Default; //Dispose()
             //base.Dispose(); do not use!!
             addLog("...Dispose() finished");
         }
@@ -632,7 +642,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             //    addLog("onDeltaScan going for snapshot...");
             //bFirstDeltaToggle = !bFirstDeltaToggle; //ready for next toggle
             //############### Take a snapshot ##################
-            Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
+//            Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
             addLog("onDeltaScan making snapshot...");
             try
             {
@@ -642,10 +652,11 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                 if (IntermecCamera.Streaming)
                 {
                     _bTakingSnapShot = true;
+                    //Cursor.Current = Cursors.WaitCursor; //cursor will be reset in snapshot event handler
 #if USE_LOW_RES                    
                     IntermecCamera.Snapshot(Camera.ImageResolutionType.Lowest);// Highest);
 #else
-                    IntermecCamera.Snapshot(Camera.ImageResolutionType.Medium);// Highest);
+                    IntermecCamera.Snapshot(cameraRes); //Camera.ImageResolutionType.Medium);// Highest);
 #endif
                 }
                 else
@@ -656,13 +667,14 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             }
             catch (CameraException ex)
             {
+                Cursor.Current = System.Windows.Forms.Cursors.Default; //CameraException
                 addLog("CameraException in onDeltaScan. Is the runtime 'CNxDShow.cab' installed?\n" + ex.Message);
             }
             catch (Exception ex)
             {
+                Cursor.Current = System.Windows.Forms.Cursors.Default; //Exception
                 addLog("Exception in onDeltaScan. Is the runtime 'CNxDShow.cab' installed?\n" + ex.Message);
             }
-            Cursor.Current = System.Windows.Forms.Cursors.Default;
 
             //_bLastState = false; //ready for next preview
         }
