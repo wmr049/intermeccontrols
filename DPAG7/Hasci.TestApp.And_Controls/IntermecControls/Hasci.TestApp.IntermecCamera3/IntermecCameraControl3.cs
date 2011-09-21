@@ -1,3 +1,4 @@
+#define USE_LOW_RES
 #define USEGDI
 //do not switch streaming! see also "ALL THE TIME"
 #define STREAMING_ON
@@ -124,7 +125,11 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                     try
                     {
                         //using the same sequence as in sample CN3Camera
+#if USE_LOW_RES
+                        IntermecCamera = new Camera(CameraPreview, Camera.ImageResolutionType.Lowest);
+#else
                         IntermecCamera = new Camera(CameraPreview, Camera.ImageResolutionType.Medium);
+#endif
                         //IntermecCamera.PictureBoxUpdate = Camera.PictureBoxUpdateType.None;
                         IntermecCamera.PictureBoxUpdate = Camera.PictureBoxUpdateType.Fit; // None;// Fit;// AdjustToFrameSize;
                         bSuccess = true;
@@ -199,7 +204,11 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                 //IntermecCamera.SnapshotFile.Filename = "FotoKamera_"+ DateTime.Now.ToShortDateString()+ "_" + DateTime.Now.ToShortTimeString() + ".jpg";
                 IntermecCamera.SnapshotFile.ImageFormatType = Camera.ImageType.JPG;
                 //WARNING, if you dont set this property, snapshot may fail with garbage image
+#if USE_LOW_RES
+                IntermecCamera.SnapshotFile.ImageResolution = Camera.ImageResolutionType.Lowest;
+#else
                 IntermecCamera.SnapshotFile.ImageResolution = Camera.ImageResolutionType.Medium;
+#endif
                 IntermecCamera.SnapshotFile.JPGQuality = 90;
                 IntermecCamera.SnapshotFile.Directory = "\\Temp";
                 IntermecCamera.SnapshotFile.Filename = _sFileTemplate;
@@ -298,12 +307,12 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                 //    new Rectangle(0,0,480,400),
                 //    GraphicsUnit.Pixel);// = new System.Drawing.Bitmap(_fileName);
             }
-            else
+            else //Camera.SnapshotStatus.Ok
             {
                 System.Diagnostics.Debug.WriteLine("SnapshotEvent not OK: " + snArgs.Status.ToString());
                 System.Diagnostics.Debug.WriteLine("File: '" + IntermecCamera.SnapshotFile.Directory +"' '"+ IntermecCamera.SnapshotFile.Filename+"'");
                 Cursor.Current = System.Windows.Forms.Cursors.Default;
-                showSnapshot(false);
+                showSnapshot(false); //show preview
             }
 #if STREAMING_ON
             addLog("SnapshotEvent: we DO NOT SWITCH streaming");
@@ -313,6 +322,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
 #endif
             _bTakingSnapShot = false;
             _bInDeltaProcessing = false;
+            _bLastState = false; //enable OnState processing
             System.Diagnostics.Debug.WriteLine("...IntermecCamera_SnapshotEvent ended.");
         }
 
@@ -332,7 +342,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             System.Diagnostics.Debug.WriteLine("showImage loading " + sFileName + ", width/height = " + m_size.Width.ToString() + "/"+ m_size.Height.ToString());
             //CameraPreview.Image = ImageHelper.CreateThumbnail(m_stream, CameraPreview.Width, CameraPreview.Height);
             CameraSnapshot.Image = ImageHelper.CreateThumbnail(m_stream, CameraPreview.Width, CameraPreview.Height);
-            showSnapshot(true);
+            showSnapshot(true); //show still image
             m_stream.Dispose();
             stream.Close();
         }
@@ -491,7 +501,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             }
             else
             {
-                addLog("ImageIsInPreview");
+                addLog("##### ImageIsInPreview #####");
                 CameraPreview.Update();
                 OnInPreview(new EventArgs());
             }
@@ -567,6 +577,7 @@ namespace Hasci.TestApp.IntermecPhotoControls3
             addLog2("onStateScan started...");
             if (_bTakingSnapShot) //do not disturb snapshot
             {
+                addLog2("...onStateScan: busy taking snapshot (_bTakingSnapShot)");
                 return;
             }
             if (_bLastState)
@@ -631,7 +642,11 @@ namespace Hasci.TestApp.IntermecPhotoControls3
                 if (IntermecCamera.Streaming)
                 {
                     _bTakingSnapShot = true;
+#if USE_LOW_RES                    
+                    IntermecCamera.Snapshot(Camera.ImageResolutionType.Lowest);// Highest);
+#else
                     IntermecCamera.Snapshot(Camera.ImageResolutionType.Medium);// Highest);
+#endif
                 }
                 else
                 {
@@ -682,17 +697,17 @@ namespace Hasci.TestApp.IntermecPhotoControls3
 #if USEGDI
                 addLog("showSnapshot() called with " + bShowHide.ToString());
                 if (bShowHide)
-                {
-                    // CameraSnapshot.BringToFront();
+                {                    
                     CameraSnapshot.Visible = true;
                     CameraPreview.Visible = false;
                     ImageIsReady();
+                    CameraSnapshot.BringToFront();
                 }
                 else
-                {
-                    //CameraPreview.BringToFront();
+                {                    
                     CameraSnapshot.Visible = false;// BringToFront();
                     CameraPreview.Visible = true;
+                    CameraPreview.BringToFront();
                     ImageIsInPreview();
                 }
                 _bIsSnapshotView = bShowHide;
