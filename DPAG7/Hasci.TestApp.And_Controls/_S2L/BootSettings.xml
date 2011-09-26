@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DevInfo Action="Set" Persist="true">
+	<Commands>
+		<!-- set res for preview and snapshot
+		0 = low
+		1 = mid
+		2 = high
+		-->
+		<SetRegKey 
+			KeyName="Software\HasciTestApp" 
+			ValueName="snapRes"
+			Value="0" 
+			Type="DWORD"
+		/> 
+		<SetRegKey 
+			KeyName="Software\HasciTestApp" 
+			ValueName="PreviewRes"
+			Value="1" 
+			Type="DWORD"
+		/> 
+	</Commands>	
 	<Subsystem Name="Data Collection">
 		<Group Name="Scanners" Instance="0">
 			<Group Name="Symbologies">

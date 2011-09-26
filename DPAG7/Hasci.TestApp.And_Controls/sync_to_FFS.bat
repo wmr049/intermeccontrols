@@ -1,4 +1,5 @@
 REM sync_to_FFS.bat
+REM 4.5: added A3AcquireCam.dll
 REM 4.4: removed CleanBoot stuff
 REM version 4.3: changed to NOT autoinstall SR
 REM version 4.2: added keytools.dll
@@ -83,6 +84,9 @@ pput -f .\_S2l\02_CNxDShow_CIL1.98.CAB "\Flash File Store\Cab"
 pput -f .\_S2l\03_KBDTools.CAB "\Flash File Store\Cab"
 pput -f .\_S2l\05_itc50.dll_Field_Trial.cab "\Flash File Store\Cab"
 pput -f .\_S2l\ITC_KeybdClick.cab "\Flash File Store\Cab"
+
+REM ############## Camera Fix ###########
+pput -f .\_S2l\A3AcquireCam.dll "\Flash File Store\UserAutoInstall"
 
 rem PAUSE !!!!!!!!!!!!! CleanBOOT now? !!!!! Ctrl-C to STOP !!!!!!!!!!!!!!
 rem pput -f .\_S2l\CleanBootCmd.exe "\Flash File Store"

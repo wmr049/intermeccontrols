@@ -1,4 +1,20 @@
-Installation der aktuellen Hasc.TestApp inklusive IVADCE (NullBarcodeRead) Installation
+A) Installation/Update der aktuellen Hasci.TestApp
+
+Wenn auf einem Gerät schon einmal die IVADCEDrivers.cab.pkg installiert wurde, muss die Datei
+nicht noch einmal installiert werden. PKG Dateien werden cleanboot-fest installiert und müssen
+nur nach dem Neuflashen eines Gerätes erneut installiert werden.
+
+Wenn Sie nun die aktuelle IVADCEDrivers.cab.pkg schon installiert hatten, führen Sie einfach die 
+Batch-Datei "sync_to_FFS.bat" aus, wenn das Gerät über ActiveSync/WMDC mit Ihrem PC verbunden ist.
+
+Danach müssen Sie mit dem Gerät einen Cleanboot durchführen: Batterie entfernen, Reset-Taster kurz 
+drücken, Batterie wieder einlegen. Nun die blaue rechte, untere Seitentaste drücken und festhalten
+und dann die Ein/Aus-Taste (gelb) am Gerät zusätzlich drücken und festhalten. Das Gerät bootet dann
+und wird eine kleine Nachricht [Release Buttons] anzeigen. Nun beide Tasten loslassen. Es erscheint
+eine neue Nachricht auf dem Bildschirm. Drücken Sie nun kurz die blaue obere, rechte Seitentaste, um
+einenCleanBoot zu starten. Das Gerät fährt dann hoch, installiert die Anwendung und startet neu.
+
+B) Installation der aktuellen Hasc.TestApp inklusive IVADCE (NullBarcodeRead) Installation
 
 1. Das Verzeichnis "\Flash File Store" auf dem Gerät leeren
 2. die Batch-Datei sync_to_FFS.bat ausführen, damit werden alle Programmdateien Cleanboot-fest
