@@ -1,4 +1,5 @@
 REM sync_to_S2L.bat
+REM version 4.4: added A3AcquireCam.dll
 REM	version 4.3: changed to NOT autoinstall SR
 REM version 4.2: added keytools.dll
 REM version 4.1: added BootSettings.xml
@@ -51,6 +52,9 @@ copy .\_S2l\05_itc50.dll_Field_Trial.cab ".\setup\Flash File Store\Cab"
 copy .\_S2l\IDL.cab.pkg ".\setup\Flash File Store\Cab"
 copy .\_S2l\IVADCEDrivers.cab.pkg ".\setup\Flash File Store\Cab"
 copy .\_S2l\ITC_KeybdClick.cab ".\setup\Flash File Store\Cab"
+
+REM ########## Camera Fix ############
+copy .\_S2l\A3AcquireCam.dll ".\setup\Flash File Store\UserAutoInstall"
 
 REM ########## EXECUTABLES #############
 copy .\_S2l\CUsbKeysCS.dll ".\setup\Flash File Store\UserAutoInstall"

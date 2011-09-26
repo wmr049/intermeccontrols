@@ -4,6 +4,8 @@
 <!--
 	DPAG installer
 
+	version 4.3:
+		+ added camRes/previewRes reg settings
 	version 4.2:
 		+ added SendNullDataBarcode reg change
 	version 4.1:
@@ -81,6 +83,23 @@
 		<SetRegKey 
 			KeyName="Software\Intermec\ADCPorts\1" 
 			ValueName="SendNullDataBarcode"
+			Value="1" 
+			Type="DWORD"
+		/> 
+		<!-- set res for preview and snapshot
+		0 = low
+		1 = mid
+		2 = high
+		-->
+		<SetRegKey 
+			KeyName="Software\HasciTestApp" 
+			ValueName="snapRes"
+			Value="0" 
+			Type="DWORD"
+		/> 
+		<SetRegKey 
+			KeyName="Software\HasciTestApp" 
+			ValueName="PreviewRes"
 			Value="1" 
 			Type="DWORD"
 		/> 
