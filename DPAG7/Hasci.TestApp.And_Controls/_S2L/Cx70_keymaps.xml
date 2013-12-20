@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<KeyMaps>
 <KBDMap Keyboard="A-Numeric\0001" Date="2003/01/02 14:34:38" Absolute="0">
  <Normal>
   <KEY Page="7" Usage="0" Value="0"/>
@@ -1072,3 +1073,4 @@
   <KEY Page="7" Usage="139" Value="2" NoRepeat="1" PlaneShift="1"/>
  </Green>
 </KBDMap>
+</KeyMaps>
